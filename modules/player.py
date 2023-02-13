@@ -42,6 +42,7 @@ class Player:
         self.dying = False
 
         self.JUMP_TIMER = CustomTimer()
+        self.CYOTE_TIMER = CustomTimer()
 
     def update_image(self):
 
@@ -85,13 +86,14 @@ class Player:
             self.input_x -= 1
             self.facing_right = False
         
-        if keys[pygame.K_SPACE] and self.on_ground and self.can_jump:
+        if keys[pygame.K_SPACE] and (self.on_ground or self.CYOTE_TIMER.running) and self.can_jump:
 
             self.velocity.y = -self.jump_power
             self.can_jump = False
             self.JUMP_TIMER.start(600)
             self.jumping = True
             self.anim_index = 0
+            self.CYOTE_TIMER.stop()
             # self.master.sounds["jump2"].play()
 
         self.moving = bool(self.input_x)
@@ -115,10 +117,14 @@ class Player:
 
         self.power_land = 0
         if not self.on_ground: self.power_land = self.velocity.y
+        was_on_ground = self.on_ground
         self.on_ground = False
 
         do_collision(self, self.master.game.level, 1, self.master)
         do_collision(self, self.master.game.level, 2, self.master)
+
+        if not self.on_ground and was_on_ground:
+            self.CYOTE_TIMER.start(100)
 
         if self.power_land > 1 and self.on_ground:
             self.landing = True
@@ -136,15 +142,18 @@ class Player:
                     if event.key == pygame.K_SPACE:
                         self.JUMP_TIMER.stop()
                         self.can_jump = True
-                    # if event.key == pygame.K_ESCAPE:
+                    # if event.key in (pygame.K_ESCAPE, pygame.K_p):
                     #     self.master.game.pause_game()
             
         if self.JUMP_TIMER.check():
             self.can_jump = True
 
+        self.CYOTE_TIMER.check()
+
     def draw(self):
 
         self.screen.blit(self.image, self.rect.topleft + self.master.offset)
+        pygame.draw.rect(self.screen, "green", (self.hitbox.x + self.master.offset.x, self.hitbox.y + self.master.offset.y, self.hitbox.width, self.hitbox.height), 1)
 
     def update(self):
 

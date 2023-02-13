@@ -27,27 +27,6 @@ class Level:
 
         return grid
 
-    def snap_offset(self):
-
-        self.master.offset =  (self.master.player.hitbox.center - pygame.Vector2(W/2, H/2)) * -1
-
-    def update_offset(self):
-
-        camera_rigidness = 0.18 if self.master.player.moving else 0.05
-        self.master.offset -= (self.master.offset + (self.master.player.hitbox.center - pygame.Vector2(W/2, H/2)))\
-            * camera_rigidness * self.master.dt
-
-    def clamp_offset(self):
-
-        if self.master.offset.x > 0: self.master.offset.x = 0
-        elif self.master.offset.x < -self.size[0]*TILESIZE + W:
-            self.master.offset.x = -self.size[0]*TILESIZE + W
-
-        if self.master.offset.y > 0: self.master.offset.y = 0
-        if self.master.offset.y < -self.size[1]*TILESIZE + H:
-            self.master.offset.y = -self.size[1]*TILESIZE + H
-
-
     def draw_bg(self):
 
         self.screen.fill(0x72060c)
@@ -68,6 +47,57 @@ class Level:
     def draw_fg(self):
 
         pass
+
+    def update(self):
+
+        pass
+
+
+class Camera:
+
+    def __init__(self, master, target = None, key = None):
+
+        self.master = master
+        master.camera = self
+
+        self.camera_rigidness = 0.05
+
+        self.target = target
+        self.key = key
+
+    def key(self): pass
+
+    def set_target(self, target, key):
+
+        self.target = target
+        self.key = key
+
+    def get_target_pos(self):
+
+        return self.key(self.target)
+
+    def snap_offset(self):
+
+        self.master.offset =  (self.get_target_pos() - pygame.Vector2(W/2, H/2)) * -1
+
+    def update_offset(self):
+
+        if self.target == self.master.player:
+            self.camera_rigidness = 0.18 if self.master.player.moving else 0.05
+        else: self.camera_rigidness = 0.05
+        
+        self.master.offset -= (self.master.offset + (self.get_target_pos() - pygame.Vector2(W/2, H/2)))\
+            * self.camera_rigidness * self.master.dt
+
+    def clamp_offset(self):
+
+        if self.master.offset.x > 0: self.master.offset.x = 0
+        elif self.master.offset.x < -self.master.level.size[0]*TILESIZE + W:
+            self.master.offset.x = -self.master.level.size[0]*TILESIZE + W
+
+        if self.master.offset.y > 0: self.master.offset.y = 0
+        if self.master.offset.y < -self.master.level.size[1]*TILESIZE + H:
+            self.master.offset.y = -self.master.level.size[1]*TILESIZE + H
 
     def update(self):
 

@@ -2,7 +2,7 @@ import pygame
 from .engine import *
 from .config import *
 from .player import Player
-from .level import Level
+from .world import Level, Camera
 # from .music import Music
 # from .menus import PauseMenu
 
@@ -25,6 +25,7 @@ class Game:
         self.player = Player(master)
         self.level = Level(master, "test")
         self.master.level = self.level
+        self.camera = Camera(master, self.player, lambda a:a.hitbox.center)
 
         self.paused = False
 
@@ -47,6 +48,7 @@ class Game:
 
         self.player.update()
         self.level.update()
+        self.camera.update()
 
         self.level.draw_bg()
         self.player.draw()
