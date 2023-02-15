@@ -8,7 +8,7 @@ class Button():
         self.pos = pos
         self.action = action
         self.master = master
-        self.screen = pygame.display.get_surface()
+        self.screen = master.display
         self.text_color = text_color
         self.mouse_hover = False
         self.hover_sound_played = False
@@ -55,7 +55,7 @@ class MainMenu():
     def __init__(self, master):
         self.master = master
         self.master.main_menu = self
-        self.screen = pygame.display.get_surface()
+        self.screen = master.display
         # self.mainmenu_bg = pygame.image.load("graphics/maps/parallax/back.png").convert()
         self.title_surf = self.master.font_big.render('Lethal Intrusion', False, (163, 32, 28))
         self.title_rect = self.title_surf.get_rect(midtop=(W/2, 40))
@@ -113,7 +113,7 @@ class PauseMenu():
         self.master = master
         self.master.pause_menu = self
 
-        self.screen = pygame.display.get_surface()
+        self.screen = master.display
         self.bg = self.screen.copy()
         self.bg_overlay = pygame.Surface(self.screen.get_size())
         self.bg_overlay.fill(0xb5737c)

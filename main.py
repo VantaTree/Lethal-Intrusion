@@ -1,6 +1,7 @@
 import pygame
-from modules import *
+import pygame_shaders
 import asyncio
+from modules import *
 
 class Master:
 
@@ -10,9 +11,9 @@ class Master:
         self.debug:Debug
         self.dt:float
         self.offset:pygame.Vector2
+        self.display:pygame.Surface
 
 
-    
 class App:
 
     MAIN_MENU = 2
@@ -21,17 +22,22 @@ class App:
     def __init__(self):
         
         pygame.init()
-        self.screen = pygame.display.set_mode((W, H), pygame.SCALED)
+        self.screen = pygame.display.set_mode((W, H), pygame.SCALED|pygame.OPENGL|pygame.DOUBLEBUF)
+        self.display = pygame.Surface((W, H))
         pygame.display.set_caption("Lethal Intrusion")
         # icon = pygame.image.load("graphics/icon.png").convert()
         # pygame.display.set_icon(icon)
         self.clock = pygame.time.Clock()
 
+        self.shader = pygame_shaders.Shader((W, H), (W, H), (0, 0), "shaders/default_vertex.glsl", 
+                        "shaders/default_fragment.glsl", self.display)
+
         self.state = self.IN_GAME
 
         self.master = Master()
+        self.master.display = self.display
         self.master.app = self
-        self.debug = Debug()
+        self.debug = Debug(self.display)
         self.master.debug = self.debug
         self.game = Game(self.master)
         # SoundSet(self.master)
@@ -41,7 +47,7 @@ class App:
         
         while True:
 
-            pygame.display.update()
+            pygame.display.flip()
 
             self.master.dt = self.clock.tick(FPS) / 16.667
             if self.master.dt > 10: self.master.dt = 10
@@ -57,6 +63,8 @@ class App:
 
             self.run_states()
             self.debug.draw()
+
+            self.shader.render(self.display)
 
     def run_states(self):
 

@@ -16,7 +16,7 @@ class Game:
 
         self.master = master
         self.master.game = self
-        self.screen = pygame.display.get_surface()
+        self.screen = master.display
 
         self.master.offset = pygame.Vector2(0, 0)
 

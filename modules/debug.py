@@ -2,9 +2,9 @@ import pygame
 
 class Debug:
 
-    def __init__(self, font_size=12, offset=6, surf_enabled=False):
+    def __init__(self, display, font_size=12, offset=6, surf_enabled=False):
 
-        self.screen = pygame.display.get_surface()
+        self.screen = display
         self.surface = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
         self.debug_list:list = list()
         self.font_size = font_size

@@ -10,7 +10,7 @@ class Player:
 
         self.master = master
         self.master.player = self
-        self.screen = pygame.display.get_surface()
+        self.screen = master.display
 
         self.animations = import_sprite_sheets("graphics/player/anims")
         self.animation = self.animations["idle"]

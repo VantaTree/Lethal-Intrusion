@@ -1,4 +1,5 @@
 import pygame
+import pygame_shaders
 import csv
 from .config import *
 from .engine import *
@@ -8,7 +9,7 @@ class Level:
     def __init__(self, master, level_id):
         
         self.master = master
-        self.screen = pygame.display.get_surface()
+        self.screen = master.display
         
         self.map_type = level_id
         self.collision = self.load_csv(F"data/levels/{level_id}/_collision.csv", True)
@@ -29,6 +30,7 @@ class Level:
 
     def draw_bg(self):
 
+        pygame_shaders.clear((114, 6, 12))
         self.screen.fill(0x72060c)
         
         for y, row in enumerate(self.collision):
