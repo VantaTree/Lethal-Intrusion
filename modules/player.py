@@ -34,6 +34,7 @@ class Player:
         self.moving = False
         self.can_jump = True
         self.on_ground = True
+        self.on_slope = False
         self.jumping = False
         self.landing = False
 
@@ -114,11 +115,14 @@ class Player:
         self.hitbox.centerx += self.velocity.x * self.master.dt
         do_collision(self, self.master.game.level, 0, self.master)
         self.hitbox.centery += self.velocity.y * self.master.dt
+        if self.on_slope:
+            self.hitbox.centery += abs(self.velocity.x * self.master.dt) +1
 
         self.power_land = 0
         if not self.on_ground: self.power_land = self.velocity.y
         was_on_ground = self.on_ground
         self.on_ground = False
+        self.on_slope = False
 
         do_collision(self, self.master.game.level, 1, self.master)
         do_collision(self, self.master.game.level, 2, self.master)
@@ -142,6 +146,8 @@ class Player:
                     if event.key == pygame.K_SPACE:
                         self.JUMP_TIMER.stop()
                         self.can_jump = True
+                        if self.velocity.y < -1:
+                            self.velocity.y = -1
                     # if event.key in (pygame.K_ESCAPE, pygame.K_p):
                     #     self.master.game.pause_game()
             
@@ -153,7 +159,7 @@ class Player:
     def draw(self):
 
         self.screen.blit(self.image, self.rect.topleft + self.master.offset)
-        pygame.draw.rect(self.screen, "green", (self.hitbox.x + self.master.offset.x, self.hitbox.y + self.master.offset.y, self.hitbox.width, self.hitbox.height), 1)
+        # pygame.draw.rect(self.screen, "green", (self.hitbox.x + self.master.offset.x, self.hitbox.y + self.master.offset.y, self.hitbox.width, self.hitbox.height), 1)
 
     def update(self):
 
@@ -165,6 +171,7 @@ class Player:
 
         self.master.debug("pos: ", (round(self.hitbox.centerx, 2), round(self.hitbox.bottom, 2)))
         self.master.debug("on ground: ", self.on_ground)
+        self.master.debug("on slope: ", self.on_slope)
 
 
 def do_collision(player:Player, level, axis, master):
@@ -222,10 +229,12 @@ def do_collision(player:Player, level, axis, master):
                     if relx > TILESIZE:
                         player.hitbox.bottom = rect.top
                         player.on_ground = True
+                        player.on_slope = True
                         player.velocity.y = 0
                     elif player.hitbox.bottom > y*TILESIZE-relx+TILESIZE:
                         player.hitbox.bottom = y*TILESIZE-relx+TILESIZE# +1 #error correction
                         player.on_ground = True
+                        player.on_slope = True
                         player.velocity.y = 0
                         
 def get_xy(grid, x, y):
