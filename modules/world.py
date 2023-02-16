@@ -68,7 +68,7 @@ class Level:
 
         for layer in self.tile_map_layers:
             for x, y, image in layer.tiles():
-                self.screen.blit(image, (x*TILESIZE + self.master.offset.x, y*TILESIZE + self.master.offset.y))
+                self.screen.blit(image, (x*TILESIZE + self.master.offset.x, y*TILESIZE + self.master.offset.y - image.get_height() + TILESIZE))
         
         for y, row in enumerate(self.collision):
             for x, cell in enumerate(row):
