@@ -185,12 +185,13 @@ def do_collision(player:Player, level, axis, master):
         for x in range(px-1, px+2):
 
             if x < 0 or y < 0: continue
+            try:
+                cell =  level.collision[y][x]
+            except IndexError: continue
 
             rect = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE)
-            rectg = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, 8)
             if not player.hitbox.colliderect(rect): continue
-
-            cell = get_xy(level.collision, x, y)
+            rectg = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, 8)
 
             if axis == 0: # x-axis
 

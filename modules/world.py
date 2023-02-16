@@ -1,6 +1,8 @@
 import pygame
 import pygame_shaders
 import csv
+import pytmx
+from pytmx.util_pygame import load_pygame
 from .config import *
 from .engine import *
 
@@ -12,9 +14,12 @@ class Level:
         self.screen = master.display
         
         self.map_type = level_id
-        self.collision = self.load_csv(F"data/levels/{level_id}/_collision.csv", True)
-        self.size = len(self.collision[0])*TILESIZE, len(self.collision)*TILESIZE
+        self.data = load_pygame(F"data/maps/{self.map_type}.tmx", load_all_tiles=True)
+        self.size = self.data.width, self.data.height
 
+        self.get_collision_data()
+        self.get_draw_layers()
+        
     @staticmethod
     def load_csv(path, integer=False):
 
@@ -27,11 +32,43 @@ class Level:
             grid = [row for row in reader]
 
         return grid
+    
+    def get_collision_data(self):
+        
+        for tileset in self.data.tilesets:
+            if tileset.name == "collision":
+                collision_firstgid = tileset.firstgid
+
+        self.collision = self.data.get_layer_by_name("collision").data
+        
+        for y, row in enumerate(self.collision):
+            for x, gid in enumerate(row):
+
+                self.collision[y][x] = self.data.tiledgidmap[gid] - collision_firstgid
+
+    def get_draw_layers(self):
+
+        self.fg_layers = [self.data.get_layer_by_name(F"fg_{i}") for i in range(self.data.properties["fg_layers"])]
+        self.tile_map_layers = [self.data.get_layer_by_name(F"tile_map_{i}") for i in range(self.data.properties["tile_map_layers"])]
+        self.bg_layers = [self.data.get_layer_by_name(F"bg_{i}") for i in range(self.data.properties["bg_layers"])]
+
+        for layer in self.fg_layers + self.bg_layers:
+            layer.parallaxx = float(layer.parallaxx)
+            layer.parallaxy = float(layer.parallaxy)
 
     def draw_bg(self):
 
         pygame_shaders.clear((114, 6, 12))
         self.screen.fill(0x72060c)
+
+        for layer in self.bg_layers:
+            if isinstance(layer, pytmx.TiledImageLayer):
+                self.draw_image_layer(self.screen, layer, self.master.offset)
+                # self.screen.blit(layer.image, (self.master.offset.x*layer.parallaxx, self.master.offset.y*layer.parallaxy))
+
+        for layer in self.tile_map_layers:
+            for x, y, image in layer.tiles():
+                self.screen.blit(image, (x*TILESIZE + self.master.offset.x, y*TILESIZE + self.master.offset.y))
         
         for y, row in enumerate(self.collision):
             for x, cell in enumerate(row):
@@ -46,9 +83,22 @@ class Level:
                 elif cell == 4:
                     pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE//4), 1)
 
+        for layer in self.fg_layers:
+            if isinstance(layer, pytmx.TiledImageLayer):
+                self.draw_image_layer(self.screen, layer, self.master.offset)
+
     def draw_fg(self):
 
         pass
+    
+    @staticmethod
+    def draw_image_layer(surface, layer, offset):
+
+        pos = offset.x*layer.parallaxx, offset.y*layer.parallaxy
+        surface.blit(layer.image, pos)
+
+        # todo: implement repeat
+        # todo: add custom property repeat in Tiled cuz PyTMX doesn't parse it >:(
 
     def update(self):
 
@@ -93,12 +143,15 @@ class Camera:
 
     def clamp_offset(self):
 
-        if self.master.offset.x > 0: self.master.offset.x = 0
+        if self.master.level.size[0]*TILESIZE <= W: self.master.offset.x = 0
+        elif self.master.offset.x > 0: self.master.offset.x = 0
         elif self.master.offset.x < -self.master.level.size[0]*TILESIZE + W:
             self.master.offset.x = -self.master.level.size[0]*TILESIZE + W
-
-        if self.master.offset.y > 0: self.master.offset.y = 0
-        if self.master.offset.y < -self.master.level.size[1]*TILESIZE + H:
+        
+        if self.master.level.size[1]*TILESIZE <= H:
+            self.master.offset.y = 0
+        elif self.master.offset.y > 0: self.master.offset.y = 0
+        elif self.master.offset.y < -self.master.level.size[1]*TILESIZE + H:
             self.master.offset.y = -self.master.level.size[1]*TILESIZE + H
 
     def update(self):
