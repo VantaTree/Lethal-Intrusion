@@ -3,6 +3,7 @@ import pygame_shaders
 import csv
 import pytmx
 from pytmx.util_pygame import load_pygame
+from math import ceil
 from .config import *
 from .engine import *
 
@@ -58,13 +59,12 @@ class Level:
 
     def draw_bg(self):
 
-        pygame_shaders.clear((114, 6, 12))
-        self.screen.fill(0x72060c)
+        pygame_shaders.clear((0, 0, 0))
+        self.screen.fill(self.data.background_color)
 
         for layer in self.bg_layers:
             if isinstance(layer, pytmx.TiledImageLayer):
                 self.draw_image_layer(self.screen, layer, self.master.offset)
-                # self.screen.blit(layer.image, (self.master.offset.x*layer.parallaxx, self.master.offset.y*layer.parallaxy))
 
         for layer in self.tile_map_layers:
             for x, y, image in layer.tiles():
@@ -95,10 +95,20 @@ class Level:
     def draw_image_layer(surface, layer, offset):
 
         pos = offset.x*layer.parallaxx, offset.y*layer.parallaxy
-        surface.blit(layer.image, pos)
 
-        # todo: implement repeat
-        # todo: add custom property repeat in Tiled cuz PyTMX doesn't parse it >:(
+        if hasattr(layer,"repeatx"):
+            for i in range(0, ceil((W-pos[0])/layer.image.get_width())):
+                surface.blit(layer.image, (pos[0]+ i*layer.image.get_width(), pos[1]))
+
+                if hasattr(layer,"repeaty"):
+                    for iy in range(1, ceil((H-pos[1])/layer.image.get_height())):
+                        surface.blit(layer.image, (pos[0]+ i*layer.image.get_width(), pos[1]+ iy*layer.image.get_height()))
+
+        elif hasattr(layer,"repeaty"):
+            for iy in range(0, ceil((H-pos[1])/layer.image.get_height())):
+                surface.blit(layer.image, (pos[0], pos[1]+ iy*layer.image.get_height()))
+        else:
+            surface.blit(layer.image, pos)
 
     def update(self):
 
