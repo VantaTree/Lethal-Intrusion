@@ -9,7 +9,7 @@ from .engine import *
 
 class Level:
 
-    def __init__(self, master, level_id):
+    def __init__(self, master, level_id, trans_id=None):
         
         self.master = master
         self.screen = master.display
@@ -20,7 +20,12 @@ class Level:
 
         self.get_collision_data()
         self.get_draw_layers()
-        
+        self.get_object_layers()
+
+        if trans_id is not None:
+            trans_to = self.data.get_object_by_name(F"transition_spawn_{trans_id}")
+            self.master.player.hitbox.midbottom = trans_to.x, trans_to.y
+
     @staticmethod
     def load_csv(path, integer=False):
 
@@ -56,6 +61,12 @@ class Level:
         for layer in self.fg_layers + self.bg_layers:
             layer.parallaxx = float(layer.parallaxx)
             layer.parallaxy = float(layer.parallaxy)
+
+    def get_object_layers(self):
+
+        for obj_grp in self.data.objectgroups:
+            if obj_grp.name == "transition":
+                self.transition_objects = obj_grp
 
     def draw_bg(self):
 
@@ -110,9 +121,33 @@ class Level:
         else:
             surface.blit(layer.image, pos)
 
+    def check_player_transitions(self):
+
+        player = self.master.player
+
+        for obj in self.transition_objects:
+
+            rect = pygame.Rect(obj.x, obj.y, obj.width, obj.height)
+            if rect.collidepoint(player.hitbox.center):
+
+                direc = obj.properties["direction"]
+
+                if direc == "right" and player.velocity.x > 0:
+                    pass
+                elif direc == "left" and player.velocity.x < 0:
+                    pass
+                elif direc == "down" and player.velocity.y > 0:
+                    pass
+                elif direc == "up" and player.velocity.y < 0:
+                    pass
+                else: continue
+
+                self.master.game.transition_level(obj.properties["room_to"], obj.properties["transition_to"])
+
+
     def update(self):
 
-        pass
+        self.check_player_transitions()
 
 
 class Camera:

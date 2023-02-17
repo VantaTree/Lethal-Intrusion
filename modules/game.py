@@ -29,6 +29,10 @@ class Game:
 
         self.paused = False
 
+    def transition_level(self, level_id, trans_id):
+
+        self.level = Level(self.master, level_id, trans_id)
+
     def pause_game(self):
 
         if not self.paused:

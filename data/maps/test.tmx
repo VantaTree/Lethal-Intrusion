@@ -13,7 +13,7 @@
  <tileset firstgid="241" source="../tsx_data/props.tsx"/>
  <tileset firstgid="257" source="../tsx_data/collision.tsx"/>
  <tileset firstgid="262" source="../tsx_data/enemies.tsx"/>
- <objectgroup id="20" name="transition_spawn" visible="0">
+ <objectgroup id="20" name="transition_spawn">
   <object id="8" name="transition_spawn_0" x="496" y="400">
    <properties>
     <property name="index" type="int" value="0"/>
@@ -21,19 +21,20 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="19" name="transition" visible="0">
+ <objectgroup id="19" name="transition">
   <object id="7" name="transition_0" x="512" y="0" width="48" height="400">
    <properties>
+    <property name="direction" value="right"/>
     <property name="index" type="int" value="0"/>
     <property name="room_to" value="test_other"/>
     <property name="transition_to" type="int" value="0"/>
    </properties>
   </object>
  </objectgroup>
- <imagelayer id="8" name="bg_0" parallaxx="0.3" parallaxy="0" repeatx="1">
+ <imagelayer id="8" name="bg_0" visible="0" parallaxx="0.3" parallaxy="0" repeatx="1">
   <image source="../../graphics/background.png" width="192" height="240"/>
  </imagelayer>
- <imagelayer id="9" name="bg_1" parallaxx="0.5" parallaxy="0" repeatx="1">
+ <imagelayer id="9" name="bg_1" visible="0" parallaxx="0.5" parallaxy="0" repeatx="1">
   <image source="../../graphics/middleground.png" width="384" height="240"/>
  </imagelayer>
  <layer id="16" name="tile_map_0" width="32" height="32">
@@ -109,7 +110,7 @@
 </data>
  </layer>
  <objectgroup id="21" name="interactables"/>
- <objectgroup id="11" name="enemy_trigger" visible="0">
+ <objectgroup id="11" name="enemy_trigger">
   <object id="5" name="trigger_0" x="352.75" y="444.75" width="106.75" height="51.25">
    <properties>
     <property name="index" type="int" value="0"/>
@@ -133,7 +134,7 @@
    </properties>
   </object>
  </objectgroup>
- <imagelayer id="14" name="fg_0" parallaxx="0" parallaxy="0">
+ <imagelayer id="14" name="fg_0" visible="0" parallaxx="0" parallaxy="0">
   <image source="../../graphics/vingette.png" width="640" height="360"/>
  </imagelayer>
  <layer id="1" name="collision" width="32" height="32" visible="0">
