@@ -1,19 +1,30 @@
 import pygame
 import pygame_shaders
 import csv
+import pytmx
+from pytmx.util_pygame import load_pygame
+from math import ceil
 from .config import *
 from .engine import *
 
 class Level:
 
-    def __init__(self, master, level_id):
+    def __init__(self, master, level_id, trans_id=None):
         
         self.master = master
         self.screen = master.display
         
         self.map_type = level_id
-        self.collision = self.load_csv(F"data/levels/{level_id}/_collision.csv", True)
-        self.size = len(self.collision[0])*TILESIZE, len(self.collision)*TILESIZE
+        self.data = load_pygame(F"data/maps/{self.map_type}.tmx", load_all_tiles=True)
+        self.size = self.data.width, self.data.height
+
+        self.get_collision_data()
+        self.get_draw_layers()
+        self.get_object_layers()
+
+        if trans_id is not None:
+            trans_to = self.data.get_object_by_name(F"transition_spawn_{trans_id}")
+            self.master.player.hitbox.midbottom = trans_to.x, trans_to.y
 
     @staticmethod
     def load_csv(path, integer=False):
@@ -27,11 +38,48 @@ class Level:
             grid = [row for row in reader]
 
         return grid
+    
+    def get_collision_data(self):
+        
+        for tileset in self.data.tilesets:
+            if tileset.name == "collision":
+                collision_firstgid = tileset.firstgid
+
+        self.collision = self.data.get_layer_by_name("collision").data
+        
+        for y, row in enumerate(self.collision):
+            for x, gid in enumerate(row):
+
+                self.collision[y][x] = self.data.tiledgidmap[gid] - collision_firstgid
+
+    def get_draw_layers(self):
+
+        self.fg_layers = [self.data.get_layer_by_name(F"fg_{i}") for i in range(self.data.properties["fg_layers"])]
+        self.tile_map_layers = [self.data.get_layer_by_name(F"tile_map_{i}") for i in range(self.data.properties["tile_map_layers"])]
+        self.bg_layers = [self.data.get_layer_by_name(F"bg_{i}") for i in range(self.data.properties["bg_layers"])]
+
+        for layer in self.fg_layers + self.bg_layers:
+            layer.parallaxx = float(layer.parallaxx)
+            layer.parallaxy = float(layer.parallaxy)
+
+    def get_object_layers(self):
+
+        for obj_grp in self.data.objectgroups:
+            if obj_grp.name == "transition":
+                self.transition_objects = obj_grp
 
     def draw_bg(self):
 
-        pygame_shaders.clear((114, 6, 12))
-        self.screen.fill(0x72060c)
+        pygame_shaders.clear((0, 0, 0))
+        self.screen.fill(self.data.background_color)
+
+        for layer in self.bg_layers:
+            if isinstance(layer, pytmx.TiledImageLayer):
+                self.draw_image_layer(self.screen, layer, self.master.offset)
+
+        for layer in self.tile_map_layers:
+            for x, y, image in layer.tiles():
+                self.screen.blit(image, (x*TILESIZE + self.master.offset.x, y*TILESIZE + self.master.offset.y - image.get_height() + TILESIZE))
         
         for y, row in enumerate(self.collision):
             for x, cell in enumerate(row):
@@ -46,13 +94,60 @@ class Level:
                 elif cell == 4:
                     pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE//4), 1)
 
+        for layer in self.fg_layers:
+            if isinstance(layer, pytmx.TiledImageLayer):
+                self.draw_image_layer(self.screen, layer, self.master.offset)
+
     def draw_fg(self):
 
         pass
+    
+    @staticmethod
+    def draw_image_layer(surface, layer, offset):
+
+        pos = offset.x*layer.parallaxx, offset.y*layer.parallaxy
+
+        if hasattr(layer,"repeatx"):
+            for i in range(0, ceil((W-pos[0])/layer.image.get_width())):
+                surface.blit(layer.image, (pos[0]+ i*layer.image.get_width(), pos[1]))
+
+                if hasattr(layer,"repeaty"):
+                    for iy in range(1, ceil((H-pos[1])/layer.image.get_height())):
+                        surface.blit(layer.image, (pos[0]+ i*layer.image.get_width(), pos[1]+ iy*layer.image.get_height()))
+
+        elif hasattr(layer,"repeaty"):
+            for iy in range(0, ceil((H-pos[1])/layer.image.get_height())):
+                surface.blit(layer.image, (pos[0], pos[1]+ iy*layer.image.get_height()))
+        else:
+            surface.blit(layer.image, pos)
+
+    def check_player_transitions(self):
+
+        player = self.master.player
+
+        for obj in self.transition_objects:
+
+            rect = pygame.Rect(obj.x, obj.y, obj.width, obj.height)
+            if rect.collidepoint(player.hitbox.center):
+
+                direc = obj.properties["direction"]
+
+                if direc == "right" and player.velocity.x > 0:
+                    pass
+                elif direc == "left" and player.velocity.x < 0:
+                    pass
+                elif direc == "down" and player.velocity.y > 0:
+                    pass
+                elif direc == "up" and player.velocity.y < 0:
+                    pass
+                else: continue
+
+                self.master.game.transition_level(obj.properties["room_to"], obj.properties["transition_to"])
+
 
     def update(self):
 
-        pass
+        self.check_player_transitions()
 
 
 class Camera:
@@ -93,12 +188,15 @@ class Camera:
 
     def clamp_offset(self):
 
-        if self.master.offset.x > 0: self.master.offset.x = 0
+        if self.master.level.size[0]*TILESIZE <= W: self.master.offset.x = 0
+        elif self.master.offset.x > 0: self.master.offset.x = 0
         elif self.master.offset.x < -self.master.level.size[0]*TILESIZE + W:
             self.master.offset.x = -self.master.level.size[0]*TILESIZE + W
-
-        if self.master.offset.y > 0: self.master.offset.y = 0
-        if self.master.offset.y < -self.master.level.size[1]*TILESIZE + H:
+        
+        if self.master.level.size[1]*TILESIZE <= H:
+            self.master.offset.y = 0
+        elif self.master.offset.y > 0: self.master.offset.y = 0
+        elif self.master.offset.y < -self.master.level.size[1]*TILESIZE + H:
             self.master.offset.y = -self.master.level.size[1]*TILESIZE + H
 
     def update(self):
