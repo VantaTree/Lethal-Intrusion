@@ -4,6 +4,8 @@ from .frect import FRect
 from .engine import *
 from .config import *
 
+#TODO: Player Movt, https://cryptpad.fr/pad/#/3/pad/edit/53704a288fec495a6656d0bedd99227f/
+
 class Player:
 
     def __init__(self, master):
@@ -24,26 +26,34 @@ class Player:
         self.hitbox = FRect(32, 0, 13, 28)
         self.velocity = pygame.Vector2()
         self.input_x = 0
+        self.facing_x = 1
         self.max_speed = 2
         self.acceleration = 0.5
         self.deceleration = 0.5
         self.jump_power = 7.5
+        self.dash_speed = 8
         self.gravity = 0.4
 
-        self.facing_right = True
+        # self.facing_right = True
         self.moving = False
-        self.can_jump = True
+        self.can_double_jump = False
         self.on_ground = True
         self.on_slope = False
         self.jumping = False
         self.landing = False
+        self.dashing = False
+        self.can_dash = True
 
         self.in_control = True
 
-        self.dying = False
+        self.has_double_jump = True
+        self.has_dash = True
 
-        self.JUMP_TIMER = CustomTimer()
+        self.JUMP_BUFFER = CustomTimer()
         self.CYOTE_TIMER = CustomTimer()
+        self.DASH_BUFFER = CustomTimer()
+        self.DASH_COOLDOWN = CustomTimer()
+        self.DASH_FOR = CustomTimer()
 
     def update_image(self):
 
@@ -68,13 +78,14 @@ class Player:
 
         self.anim_index += self.anim_speed *self.master.dt
 
-        self.image = pygame.transform.flip(image, not self.facing_right, False)
+        self.image = pygame.transform.flip(image, self.facing_x==-1, False)
         self.rect.midbottom = self.hitbox.midbottom
 
-    def get_input(self):
+    def process_events(self):
 
         if not self.in_control:
-            self.moving = False
+            if not self.dashing:
+                self.moving = False
             return
 
         self.input_x = 0
@@ -82,24 +93,69 @@ class Player:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_d]:
             self.input_x += 1
-            self.facing_right = True
+            self.facing_x = 1
+            # self.facing_right = True
         if keys[pygame.K_a]:
             self.input_x -= 1
-            self.facing_right = False
-        
-        if keys[pygame.K_SPACE] and (self.on_ground or self.CYOTE_TIMER.running) and self.can_jump:
-
-            self.velocity.y = -self.jump_power
-            self.can_jump = False
-            self.JUMP_TIMER.start(600)
-            self.jumping = True
-            self.anim_index = 0
-            self.CYOTE_TIMER.stop()
-            # self.master.sounds["jump2"].play()
+            self.facing_x = -1
+            # self.facing_right = False
 
         self.moving = bool(self.input_x)
 
+        if self.in_control:
+            for event in pygame.event.get((pygame.KEYUP, pygame.KEYDOWN)):
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_SPACE:
+                        # self.JUMP_TIMER.stop()
+                        # self.can_jump = True
+                        if self.velocity.y < -2:
+                            self.velocity.y = -2
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.JUMP_BUFFER.start(60)
+                    if self.has_dash and self.can_dash and event.key in (pygame.K_LSHIFT, pygame.K_LCTRL):
+                        self.DASH_BUFFER.start(60)
+                    # if event.key in (pygame.K_ESCAPE, pygame.K_p):
+                    #     self.master.game.pause_game()
+
+        if self.JUMP_BUFFER.running and (self.on_ground or self.CYOTE_TIMER.running or self.can_double_jump):
+
+            if not (self.on_ground or self.CYOTE_TIMER.running) and self.can_double_jump:
+                self.can_double_jump = False
+            self.velocity.y = -self.jump_power
+            self.jumping = True
+            self.anim_index = 0
+            self.JUMP_BUFFER.stop()
+            self.CYOTE_TIMER.stop()
+            # self.master.sounds["jump2"].play()
+
+        if self.DASH_BUFFER.running and not self.DASH_COOLDOWN.running:
+
+            if not (self.on_ground or self.CYOTE_TIMER.running):
+                self.can_dash = False
+            self.dashing = True
+            self.in_control = False
+            self.DASH_BUFFER.stop()
+            self.DASH_COOLDOWN.start(400)
+            self.DASH_FOR.start(100)
+    
+    def check_timers(self):
+
+        self.JUMP_BUFFER.check()
+        self.CYOTE_TIMER.check()
+        self.DASH_BUFFER.check()
+        self.DASH_COOLDOWN.check()
+        if self.DASH_FOR.check():
+            self.in_control = True
+            self.dashing = False
+            self.velocity.x = self.facing_x*2
+
     def apply_force(self):
+
+        if self.dashing:
+            self.velocity.y = 0
+            self.velocity.x = self.facing_x*self.dash_speed
+            return
 
         if self.moving:
             self.velocity.move_towards_ip( (self.max_speed*self.input_x, self.velocity.y), self.acceleration *self.master.dt)
@@ -113,9 +169,9 @@ class Player:
     def move(self):
 
         self.hitbox.centerx += self.velocity.x * self.master.dt
-        do_collision(self, self.master.game.level, 0, self.master)
+        do_collision(self, self.master.level, 0, self.master)
         self.hitbox.centery += self.velocity.y * self.master.dt
-        if self.on_slope:
+        if self.on_slope and not self.dashing:
             self.hitbox.centery += abs(self.velocity.x * self.master.dt) +1
 
         self.power_land = 0
@@ -124,11 +180,16 @@ class Player:
         self.on_ground = False
         self.on_slope = False
 
-        do_collision(self, self.master.game.level, 1, self.master)
-        do_collision(self, self.master.game.level, 2, self.master)
+        do_collision(self, self.master.level, 1, self.master)
+        do_collision(self, self.master.level, 2, self.master)
 
         if not self.on_ground and was_on_ground:
             self.CYOTE_TIMER.start(100)
+
+        if self.on_ground:
+            if self.has_double_jump:
+                self.can_double_jump = True
+            self.can_dash = True
 
         if self.power_land > 1 and self.on_ground:
             self.landing = True
@@ -136,25 +197,6 @@ class Player:
             if self.power_land >= 8:
                 # self.master.sounds["big_thud"].play()
                 pass
-
-
-    def process_events(self):
-
-        if self.in_control:
-            for event in pygame.event.get((pygame.KEYUP, pygame.KEYDOWN)):
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_SPACE:
-                        self.JUMP_TIMER.stop()
-                        self.can_jump = True
-                        if self.velocity.y < -1:
-                            self.velocity.y = -1
-                    # if event.key in (pygame.K_ESCAPE, pygame.K_p):
-                    #     self.master.game.pause_game()
-            
-        if self.JUMP_TIMER.check():
-            self.can_jump = True
-
-        self.CYOTE_TIMER.check()
 
     def draw(self):
 
@@ -164,7 +206,7 @@ class Player:
     def update(self):
 
         self.process_events()
-        self.get_input()
+        self.check_timers()
         self.apply_force()
         self.move()
         self.update_image()
