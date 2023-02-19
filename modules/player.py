@@ -27,12 +27,14 @@ class Player:
         self.velocity = pygame.Vector2()
         self.input_x = 0
         self.facing_x = 1
+        self.wall_x = 1
         self.max_speed = 2
         self.acceleration = 0.5
         self.deceleration = 0.5
         self.jump_power = 7.5
         self.dash_speed = 8
         self.gravity = 0.4
+        self.wall_friction = 0.8 # between 0 - 1
 
         # self.facing_right = True
         self.moving = False
@@ -43,17 +45,22 @@ class Player:
         self.landing = False
         self.dashing = False
         self.can_dash = True
+        self.on_wall = False
+        self.wall_clinged = False
+        self.touched_wall = False
 
         self.in_control = True
 
         self.has_double_jump = True
         self.has_dash = True
+        self.has_wall_cling = True
 
         self.JUMP_BUFFER = CustomTimer()
         self.CYOTE_TIMER = CustomTimer()
         self.DASH_BUFFER = CustomTimer()
         self.DASH_COOLDOWN = CustomTimer()
         self.DASH_FOR = CustomTimer()
+        self.WALL_JUMP_FOR = CustomTimer()
 
     def update_image(self):
 
@@ -84,6 +91,7 @@ class Player:
     def process_events(self):
 
         if not self.in_control:
+            self.input_x = 0
             if not self.dashing:
                 self.moving = False
             return
@@ -102,26 +110,30 @@ class Player:
 
         self.moving = bool(self.input_x)
 
-        if self.in_control:
-            for event in pygame.event.get((pygame.KEYUP, pygame.KEYDOWN)):
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_SPACE:
-                        # self.JUMP_TIMER.stop()
-                        # self.can_jump = True
-                        if self.velocity.y < -2:
-                            self.velocity.y = -2
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        self.JUMP_BUFFER.start(60)
-                    if self.has_dash and self.can_dash and event.key in (pygame.K_LSHIFT, pygame.K_LCTRL):
-                        self.DASH_BUFFER.start(60)
-                    # if event.key in (pygame.K_ESCAPE, pygame.K_p):
-                    #     self.master.game.pause_game()
+        for event in pygame.event.get((pygame.KEYUP, pygame.KEYDOWN)):
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    # self.JUMP_TIMER.stop()
+                    # self.can_jump = True
+                    if self.velocity.y < -2:
+                        self.velocity.y = -2
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.JUMP_BUFFER.start(60)
+                if self.has_dash and self.can_dash and event.key in (pygame.K_LSHIFT, pygame.K_LCTRL):
+                    self.DASH_BUFFER.start(60)
+                # if event.key in (pygame.K_ESCAPE, pygame.K_p):
+                #     self.master.game.pause_game()
 
-        if self.JUMP_BUFFER.running and (self.on_ground or self.CYOTE_TIMER.running or self.can_double_jump):
+        if self.JUMP_BUFFER.running and (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running or self.can_double_jump):
 
-            if not (self.on_ground or self.CYOTE_TIMER.running) and self.can_double_jump:
+            if not (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running) and self.can_double_jump:
                 self.can_double_jump = False
+            if self.wall_clinged:
+                self.facing_x = self.wall_x
+                self.velocity.x = 2*self.wall_x
+                self.in_control = False
+                self.WALL_JUMP_FOR.start(120)
             self.velocity.y = -self.jump_power
             self.jumping = True
             self.anim_index = 0
@@ -131,8 +143,10 @@ class Player:
 
         if self.DASH_BUFFER.running and not self.DASH_COOLDOWN.running:
 
-            if not (self.on_ground or self.CYOTE_TIMER.running):
+            if not (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running):
                 self.can_dash = False
+            if self.wall_clinged:
+                self.facing_x = self.wall_x
             self.dashing = True
             self.in_control = False
             self.DASH_BUFFER.stop()
@@ -149,6 +163,8 @@ class Player:
             self.in_control = True
             self.dashing = False
             self.velocity.x = self.facing_x*2
+        if self.WALL_JUMP_FOR.check():
+            self.in_control = True
 
     def apply_force(self):
 
@@ -159,14 +175,22 @@ class Player:
 
         if self.moving:
             self.velocity.move_towards_ip( (self.max_speed*self.input_x, self.velocity.y), self.acceleration *self.master.dt)
-        else:
+        elif not self.WALL_JUMP_FOR.running:
             self.velocity.move_towards_ip( (0, self.velocity.y), self.deceleration *self.master.dt)
 
+        # if self.wall_clinged:
+        #     self.velocity.x += .01*self.facing_x
+
         self.velocity.y += self.gravity *self.master.dt
-        if self.velocity.y > 8:
-            self.velocity.y = 8
+
+        limit_y = 1 if self.wall_clinged else 8
+        if self.velocity.y > limit_y:
+            self.velocity.y = limit_y
+
 
     def move(self):
+
+        self.on_wall = False
 
         self.hitbox.centerx += self.velocity.x * self.master.dt
         do_collision(self, self.master.level, 0, self.master)
@@ -183,10 +207,13 @@ class Player:
         do_collision(self, self.master.level, 1, self.master)
         do_collision(self, self.master.level, 2, self.master)
 
+        self.wall_clinged = self.on_wall and not self.on_ground
+        self.touched_wall = self.wall_clinged
+
         if not self.on_ground and was_on_ground:
             self.CYOTE_TIMER.start(100)
 
-        if self.on_ground:
+        if self.on_ground or self.wall_clinged:
             if self.has_double_jump:
                 self.can_double_jump = True
             self.can_dash = True
@@ -212,8 +239,12 @@ class Player:
         self.update_image()
 
         self.master.debug("pos: ", (round(self.hitbox.centerx, 2), round(self.hitbox.bottom, 2)))
+        self.master.debug("moving: ", self.moving)
         self.master.debug("on ground: ", self.on_ground)
-        self.master.debug("on slope: ", self.on_slope)
+        self.master.debug("wall cling: ", self.wall_clinged)
+        self.master.debug("can double jump: ", self.can_double_jump)
+        self.master.debug("can dash: ", self.can_dash)
+
 
 
 def do_collision(player:Player, level, axis, master):
@@ -232,12 +263,18 @@ def do_collision(player:Player, level, axis, master):
             except IndexError: continue
 
             rect = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE)
+            if player.has_wall_cling and player.touched_wall and axis == 0 and cell == 3 and rect.colliderect(player.hitbox.inflate(2, 0)):
+                player.on_wall = True
             if not player.hitbox.colliderect(rect): continue
             rectg = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, 8)
 
             if axis == 0: # x-axis
 
                 if cell == 3:
+
+                    if not player.touched_wall:
+                        player.wall_x = player.facing_x * -1
+                    player.touched_wall = True
 
                     if player.velocity.x > 0:
                         player.hitbox.right = rect.left
