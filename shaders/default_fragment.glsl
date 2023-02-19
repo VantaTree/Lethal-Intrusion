@@ -1,3 +1,5 @@
+#version 330
+
 in vec3 fragmentColor;
 in vec2 fragmentTexCoord;
 
