@@ -33,8 +33,7 @@ class Player:
         self.deceleration = 0.5
         self.jump_power = 7.5
         self.dash_speed = 8
-        self.gravity = 0.4
-        self.wall_friction = 0.8 # between 0 - 1
+        self.gravity = 0.32
 
         # self.facing_right = True
         self.moving = False
@@ -131,9 +130,9 @@ class Player:
                 self.can_double_jump = False
             if self.wall_clinged:
                 self.facing_x = self.wall_x
-                self.velocity.x = 2*self.wall_x
+                self.velocity.x = 2.5*self.wall_x
                 self.in_control = False
-                self.WALL_JUMP_FOR.start(120)
+                self.WALL_JUMP_FOR.start(80)
             self.velocity.y = -self.jump_power
             self.jumping = True
             self.anim_index = 0
@@ -178,12 +177,9 @@ class Player:
         elif not self.WALL_JUMP_FOR.running:
             self.velocity.move_towards_ip( (0, self.velocity.y), self.deceleration *self.master.dt)
 
-        # if self.wall_clinged:
-        #     self.velocity.x += .01*self.facing_x
-
         self.velocity.y += self.gravity *self.master.dt
 
-        limit_y = 1 if self.wall_clinged else 8
+        limit_y = 1.5 if self.wall_clinged else 8
         if self.velocity.y > limit_y:
             self.velocity.y = limit_y
 
