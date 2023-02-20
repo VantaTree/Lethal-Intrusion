@@ -56,6 +56,7 @@ class Player:
 
         self.JUMP_BUFFER = CustomTimer()
         self.CYOTE_TIMER = CustomTimer()
+        self.WALL_CYOTE_TIMER = CustomTimer()
         self.DASH_BUFFER = CustomTimer()
         self.DASH_COOLDOWN = CustomTimer()
         self.DASH_FOR = CustomTimer()
@@ -119,14 +120,14 @@ class Player:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.JUMP_BUFFER.start(60)
-                if self.has_dash and self.can_dash and event.key in (pygame.K_LSHIFT, pygame.K_LCTRL):
+                if self.has_dash and self.can_dash and event.key in (pygame.K_LSHIFT, pygame.K_LCTRL, pygame.K_j):
                     self.DASH_BUFFER.start(60)
                 # if event.key in (pygame.K_ESCAPE, pygame.K_p):
                 #     self.master.game.pause_game()
 
-        if self.JUMP_BUFFER.running and (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running or self.can_double_jump):
+        if self.JUMP_BUFFER.running and (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running or self.WALL_CYOTE_TIMER.running or self.can_double_jump):
 
-            if not (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running) and self.can_double_jump:
+            if not (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running or self.WALL_CYOTE_TIMER.running) and self.can_double_jump:
                 self.can_double_jump = False
             if self.wall_clinged:
                 self.facing_x = self.wall_x
@@ -142,7 +143,7 @@ class Player:
 
         if self.DASH_BUFFER.running and not self.DASH_COOLDOWN.running:
 
-            if not (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running):
+            if not (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running or self.WALL_CYOTE_TIMER.running):
                 self.can_dash = False
             if self.wall_clinged:
                 self.facing_x = self.wall_x
@@ -156,6 +157,7 @@ class Player:
 
         self.JUMP_BUFFER.check()
         self.CYOTE_TIMER.check()
+        self.WALL_CYOTE_TIMER.check()
         self.DASH_BUFFER.check()
         self.DASH_COOLDOWN.check()
         if self.DASH_FOR.check():
@@ -179,7 +181,7 @@ class Player:
 
         self.velocity.y += self.gravity *self.master.dt
 
-        limit_y = 1.5 if self.wall_clinged else 8
+        limit_y = 1.7 if self.wall_clinged else 8
         if self.velocity.y > limit_y:
             self.velocity.y = limit_y
 
@@ -203,8 +205,13 @@ class Player:
         do_collision(self, self.master.level, 1, self.master)
         do_collision(self, self.master.level, 2, self.master)
 
+        was_wall_clinged = self.wall_clinged
+
         self.wall_clinged = self.on_wall and not self.on_ground
         self.touched_wall = self.wall_clinged
+
+        if not self.wall_clinged and was_wall_clinged:
+            self.WALL_CYOTE_TIMER.start(100)
 
         if not self.on_ground and was_on_ground:
             self.CYOTE_TIMER.start(100)
