@@ -166,6 +166,8 @@ class Player:
             self.velocity.x = self.facing_x*2
         if self.WALL_JUMP_FOR.check():
             self.in_control = True
+            if self.input_x:
+                self.velocity.x = abs(self.velocity.x) * self.input_x
 
     def apply_force(self):
 

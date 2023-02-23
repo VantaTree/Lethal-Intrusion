@@ -59,14 +59,26 @@ class Level:
         self.bg_layers = [self.data.get_layer_by_name(F"bg_{i}") for i in range(self.data.properties["bg_layers"])]
 
         for layer in self.fg_layers + self.bg_layers:
+
+            if not hasattr(layer, "parallaxx"):
+                layer.parallaxx = 1.0
+            if not hasattr(layer, "parallaxy"):
+                layer.parallaxy = 1.0
+            if not hasattr(layer, "repeatx"):
+                layer.repeatx = 0
+            if not hasattr(layer, "repeaty"):
+                layer.repeaty = 0
+            if not hasattr(layer, "offsetx"):
+                layer.offsetx = 0
+            if not hasattr(layer, "offsety"):
+                layer.offsety = 0
+
             layer.parallaxx = float(layer.parallaxx)
             layer.parallaxy = float(layer.parallaxy)
 
     def get_object_layers(self):
 
-        for obj_grp in self.data.objectgroups:
-            if obj_grp.name == "transition":
-                self.transition_objects = obj_grp
+        self.transition_objects = self.data.get_layer_by_name("transition")
 
     def draw_bg(self):
 
@@ -105,17 +117,17 @@ class Level:
     @staticmethod
     def draw_image_layer(surface, layer, offset):
 
-        pos = offset.x*layer.parallaxx, offset.y*layer.parallaxy
+        pos = layer.offsetx + offset.x*layer.parallaxx, layer.offsety + offset.y*layer.parallaxy
 
-        if hasattr(layer,"repeatx"):
+        if layer.repeatx:
             for i in range(0, ceil((W-pos[0])/layer.image.get_width())):
                 surface.blit(layer.image, (pos[0]+ i*layer.image.get_width(), pos[1]))
 
-                if hasattr(layer,"repeaty"):
+                if layer.repeaty:
                     for iy in range(1, ceil((H-pos[1])/layer.image.get_height())):
                         surface.blit(layer.image, (pos[0]+ i*layer.image.get_width(), pos[1]+ iy*layer.image.get_height()))
 
-        elif hasattr(layer,"repeaty"):
+        elif layer.repeaty:
             for iy in range(0, ceil((H-pos[1])/layer.image.get_height())):
                 surface.blit(layer.image, (pos[0], pos[1]+ iy*layer.image.get_height()))
         else:
