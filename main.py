@@ -37,7 +37,7 @@ class App:
         self.master = Master()
         self.master.display = self.display
         self.master.app = self
-        self.debug = Debug(self.display)
+        self.debug = Debug(self.display, 24, 12)
         self.master.debug = self.debug
         self.game = Game(self.master)
         # SoundSet(self.master)
