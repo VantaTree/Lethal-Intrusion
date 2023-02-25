@@ -1,52 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.5" tiledversion="1.7.2" name="props" tilewidth="213" tileheight="220" tilecount="16" columns="0">
+<tileset version="1.5" tiledversion="1.9.2" name="props" tilewidth="426" tileheight="440" tilecount="16" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
-  <image width="193" height="165" source="../../graphics/props/house.png"/>
+  <image width="386" height="330" source="../../graphics/props/house.png"/>
  </tile>
  <tile id="1">
-  <image width="25" height="33" source="../../graphics/props/mushroom-brown.png"/>
+  <image width="50" height="66" source="../../graphics/props/mushroom-brown.png"/>
  </tile>
  <tile id="2">
-  <image width="23" height="28" source="../../graphics/props/mushroom-red.png"/>
+  <image width="46" height="56" source="../../graphics/props/mushroom-red.png"/>
  </tile>
  <tile id="3">
-  <image width="79" height="176" source="../../graphics/props/palm.png"/>
+  <image width="158" height="352" source="../../graphics/props/palm.png"/>
  </tile>
  <tile id="4">
-  <image width="82" height="130" source="../../graphics/props/pine.png"/>
+  <image width="164" height="260" source="../../graphics/props/pine.png"/>
  </tile>
  <tile id="5">
-  <image width="36" height="36" source="../../graphics/props/plant.png"/>
+  <image width="72" height="72" source="../../graphics/props/plant.png"/>
  </tile>
  <tile id="6">
-  <image width="123" height="103" source="../../graphics/props/plant-house.png"/>
+  <image width="246" height="206" source="../../graphics/props/plant-house.png"/>
  </tile>
  <tile id="7">
-  <image width="49" height="29" source="../../graphics/props/rock.png"/>
+  <image width="98" height="58" source="../../graphics/props/rock.png"/>
  </tile>
  <tile id="8">
-  <image width="53" height="53" source="../../graphics/props/rock-1.png"/>
+  <image width="106" height="106" source="../../graphics/props/rock-1.png"/>
  </tile>
  <tile id="9">
-  <image width="66" height="57" source="../../graphics/props/rock-2.png"/>
+  <image width="132" height="114" source="../../graphics/props/rock-2.png"/>
  </tile>
  <tile id="10">
-  <image width="128" height="96" source="../../graphics/props/straw-house.png"/>
+  <image width="256" height="192" source="../../graphics/props/straw-house.png"/>
  </tile>
  <tile id="11">
-  <image width="213" height="220" source="../../graphics/props/tree.png"/>
+  <image width="426" height="440" source="../../graphics/props/tree.png"/>
  </tile>
  <tile id="12">
-  <image width="119" height="111" source="../../graphics/props/tree_green.png"/>
+  <image width="238" height="222" source="../../graphics/props/tree_green.png"/>
  </tile>
  <tile id="13">
-  <image width="119" height="144" source="../../graphics/props/tree-house.png"/>
+  <image width="238" height="288" source="../../graphics/props/tree-house.png"/>
  </tile>
  <tile id="14">
-  <image width="41" height="53" source="../../graphics/props/vine.png"/>
+  <image width="82" height="106" source="../../graphics/props/vine.png"/>
  </tile>
  <tile id="15">
-  <image width="112" height="98" source="../../graphics/props/wooden-house.png"/>
+  <image width="224" height="196" source="../../graphics/props/wooden-house.png"/>
  </tile>
 </tileset>
