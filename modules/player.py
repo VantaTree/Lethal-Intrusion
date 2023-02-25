@@ -271,7 +271,7 @@ def do_collision(player:Player, level, axis, master):
             if player.has_wall_cling and player.touched_wall and axis == 0 and cell == 3 and rect.colliderect(player.hitbox.inflate(2, 0)):
                 player.on_wall = True
             if not player.hitbox.colliderect(rect): continue
-            rectg = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, 8)
+            rectg = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, 16)
 
             if axis == 0: # x-axis
 
