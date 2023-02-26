@@ -15,9 +15,10 @@ class Level:
         self.screen = master.display
         
         self.map_type = level_id
-        self.data = load_pygame(F"data/maps/{self.map_type}.tmx", load_all_tiles=True)
+        self.data = load_pygame(F"data/maps/{self.map_type}.tmx")
         self.size = self.data.width, self.data.height
 
+        self.path_data = self.load_csv(F"data/map_paths/{self.map_type}.csv", True)
         self.get_collision_data()
         self.get_draw_layers()
         self.get_object_layers()
@@ -105,6 +106,9 @@ class Level:
                     pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE), 1)
                 elif cell == 4:
                     pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE//4), 1)
+
+                # if self.path_data[y][x]:
+                #     pygame.draw.rect(self.screen, "blue", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE), 1)                
 
         for layer in self.fg_layers:
             if isinstance(layer, pytmx.TiledImageLayer):

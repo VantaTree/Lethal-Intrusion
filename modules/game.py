@@ -3,6 +3,7 @@ from .engine import *
 from .config import *
 from .player import Player
 from .world import Level, Camera
+from .path_gen import generate_all_path
 # from .music import Music
 # from .menus import PauseMenu
 
@@ -18,6 +19,7 @@ class Game:
         self.master.game = self
         self.screen = master.display
 
+        generate_all_path()
         self.master.offset = pygame.Vector2(0, 0)
 
         # self.music = Music(master)
