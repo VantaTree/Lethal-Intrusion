@@ -22,18 +22,18 @@ class Player:
         self.anim_index = 0
         self.anim_speed = 0.15
 
-        self.base_rect = FRect(0, 0, 28, 6)
-        self.hitbox = FRect(32, 0, 26, 56)
+        self.base_rect = FRect(0, 0, 14, 3)
+        self.hitbox = FRect(32, 0, 13, 28)
         self.velocity = pygame.Vector2()
         self.input_x = 0
         self.facing_x = 1
         self.wall_x = 1
-        self.max_speed = 4
-        self.acceleration = 1
-        self.deceleration = 1
-        self.jump_power = 15
-        self.dash_speed = 16
-        self.gravity = 0.64
+        self.max_speed = 2
+        self.acceleration = 0.5
+        self.deceleration = 0.5
+        self.jump_power = 7.5
+        self.dash_speed = 8
+        self.gravity = 0.32
 
         # self.facing_right = True
         self.moving = False
@@ -115,8 +115,8 @@ class Player:
                 if event.key == pygame.K_SPACE:
                     # self.JUMP_TIMER.stop()
                     # self.can_jump = True
-                    if self.velocity.y < -4:
-                        self.velocity.y = -4
+                    if self.velocity.y < -2:
+                        self.velocity.y = -2
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.JUMP_BUFFER.start(60)
@@ -131,7 +131,7 @@ class Player:
                 self.can_double_jump = False
             if self.wall_clinged:
                 self.facing_x = self.wall_x
-                self.velocity.x = 5*self.wall_x
+                self.velocity.x = 2.5*self.wall_x
                 self.in_control = False
                 self.WALL_JUMP_FOR.start(80)
             self.velocity.y = -self.jump_power
@@ -163,7 +163,7 @@ class Player:
         if self.DASH_FOR.check():
             self.in_control = True
             self.dashing = False
-            self.velocity.x = self.facing_x*self.max_speed
+            self.velocity.x = self.facing_x*2
         if self.WALL_JUMP_FOR.check():
             self.in_control = True
             if self.input_x:
@@ -183,7 +183,7 @@ class Player:
 
         self.velocity.y += self.gravity *self.master.dt
 
-        limit_y = 3.4 if self.wall_clinged else 16 # terminal velocity on wall and normal repectively
+        limit_y = 1.7 if self.wall_clinged else 8
         if self.velocity.y > limit_y:
             self.velocity.y = limit_y
 
@@ -223,10 +223,10 @@ class Player:
                 self.can_double_jump = True
             self.can_dash = True
 
-        if self.power_land > 2 and self.on_ground:
+        if self.power_land > 1 and self.on_ground:
             self.landing = True
             self.anim_index = 0
-            if self.power_land >= 16: # teminal velocity normal
+            if self.power_land >= 8:
                 # self.master.sounds["big_thud"].play()
                 pass
 
@@ -271,7 +271,7 @@ def do_collision(player:Player, level, axis, master):
             if player.has_wall_cling and player.touched_wall and axis == 0 and cell == 3 and rect.colliderect(player.hitbox.inflate(2, 0)):
                 player.on_wall = True
             if not player.hitbox.colliderect(rect): continue
-            rectg = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, 16)
+            rectg = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, 8)
 
             if axis == 0: # x-axis
 
@@ -322,9 +322,3 @@ def do_collision(player:Player, level, axis, master):
                         player.on_slope = True
                         player.velocity.y = 0
                         
-def get_xy(grid, x, y):
-
-    if x < 0 or y < 0: return
-    try:
-        return grid[y][x]
-    except IndexError: return
