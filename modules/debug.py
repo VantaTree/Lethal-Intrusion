@@ -13,7 +13,7 @@ class Debug:
         self.surf_enabled = surf_enabled
 
     def __call__(self, name, value):
-        self.debug_list.append((name, value))
+        self.debug_list.append(name + str(value))
 
     def draw(self):
 
@@ -21,8 +21,7 @@ class Debug:
             self.screen.blit(self.surface, (0, 0))
             self.surface.fill((0, 0, 0, 0))
 
-        for i, (name, value) in enumerate(self.debug_list):
-            text_surf = self.font.render(name + str(value), False, (255,255,255), (0, 0, 0))
-            self.screen.blit(text_surf, (self.offset, self.offset + (i*(self.font_size+3))))
+        text_surf = self.font.render("\n".join(self.debug_list), False, (255,255,255), (0, 0, 0))
+        self.screen.blit(text_surf, (self.offset, self.offset))
 
         self.debug_list.clear()
