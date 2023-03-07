@@ -40,6 +40,7 @@ class Player:
         self.can_double_jump = False
         self.on_ground = True
         self.on_slope = False
+        self.on_one_way_platform = False
         self.jumping = False
         self.landing = False
         self.dashing = False
@@ -61,6 +62,7 @@ class Player:
         self.DASH_COOLDOWN = CustomTimer()
         self.DASH_FOR = CustomTimer()
         self.WALL_JUMP_FOR = CustomTimer()
+        self.NEGATE_PLATFORM_COLLISION = CustomTimer() # one way olatform collsion (4)
 
     def update_image(self):
 
@@ -122,6 +124,8 @@ class Player:
                     self.JUMP_BUFFER.start(60)
                 if self.has_dash and self.can_dash and event.key in (pygame.K_LSHIFT, pygame.K_LCTRL, pygame.K_j):
                     self.DASH_BUFFER.start(60)
+                if self.on_one_way_platform and event.key == pygame.K_s:
+                    self.NEGATE_PLATFORM_COLLISION.start(500)
                 # if event.key in (pygame.K_ESCAPE, pygame.K_p):
                 #     self.master.game.pause_game()
 
@@ -160,6 +164,7 @@ class Player:
         self.WALL_CYOTE_TIMER.check()
         self.DASH_BUFFER.check()
         self.DASH_COOLDOWN.check()
+        self.NEGATE_PLATFORM_COLLISION.check()
         if self.DASH_FOR.check():
             self.in_control = True
             self.dashing = False
@@ -193,7 +198,7 @@ class Player:
         self.on_wall = False
 
         self.hitbox.centerx += self.velocity.x * self.master.dt
-        do_collision(self, self.master.level, 0, self.master)
+        self.do_collision(0)
         self.hitbox.centery += self.velocity.y * self.master.dt
         if self.on_slope and not self.dashing:
             self.hitbox.centery += abs(self.velocity.x * self.master.dt) +1
@@ -203,9 +208,10 @@ class Player:
         was_on_ground = self.on_ground
         self.on_ground = False
         self.on_slope = False
+        self.on_one_way_platform = False
 
-        do_collision(self, self.master.level, 1, self.master)
-        do_collision(self, self.master.level, 2, self.master)
+        self.do_collision(1)
+        self.do_collision(2)
 
         was_wall_clinged = self.wall_clinged
 
@@ -229,6 +235,78 @@ class Player:
             if self.power_land >= 8:
                 # self.master.sounds["big_thud"].play()
                 pass
+    def do_collision(self, axis):
+
+        level = self.master.level
+        px = int(self.hitbox.centerx / TILESIZE)
+        py = int(self.hitbox.centery / TILESIZE)
+        self.base_rect.midbottom = self.hitbox.midbottom
+        self.base_rect.y += 1
+
+        for y in range(py-1, py+2):
+            for x in range(px-1, px+2):
+
+                if x < 0 or y < 0: continue
+                try:
+                    cell =  level.collision[y][x]
+                except IndexError: continue
+
+                rect = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE)
+                if self.has_wall_cling and self.touched_wall and axis == 0 and cell == 3 and rect.colliderect(self.hitbox.inflate(2, 0)):
+                    self.on_wall = True
+                if not self.hitbox.colliderect(rect): continue
+                rectg = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, 8)
+
+                if axis == 0: # x-axis
+
+                    if cell == 3:
+
+                        if not self.touched_wall:
+                            self.wall_x = self.facing_x * -1
+                        self.touched_wall = True
+
+                        if self.velocity.x > 0:
+                            self.hitbox.right = rect.left
+                        if self.velocity.x < 0:
+                            self.hitbox.left = rect.right
+
+                elif axis == 1: # y-axis
+                    if cell == 3 or ( cell == 4 and not self.NEGATE_PLATFORM_COLLISION.running and (rectg.collidepoint(self.hitbox.bottomleft) or rectg.collidepoint(self.hitbox.bottomright)) ):
+
+                            if self.velocity.y > 0:
+                                self.hitbox.bottom = rect.top
+                                self.velocity.y = 0
+                                self.on_ground = True
+                                if cell == 4:
+                                    self.on_one_way_platform = True
+
+                    if cell == 3:
+                        if self.velocity.y < 0:
+                            self.hitbox.top = rect.bottom
+                            self.velocity.y = 0
+
+                elif axis == 2 and self.velocity.y >= 0: # slopes
+
+                    if not rect.colliderect(self.base_rect): continue
+
+                    relx = None
+                    if cell == 1:
+                        relx = self.hitbox.right - rect.left
+                    elif cell == 2:
+                        relx = rect.right - self.hitbox.left
+                    else: continue
+                        
+                    if relx is not None:
+                        if relx > TILESIZE:
+                            self.hitbox.bottom = rect.top
+                            self.on_ground = True
+                            self.on_slope = True
+                            self.velocity.y = 0
+                        elif self.hitbox.bottom > y*TILESIZE-relx+TILESIZE:
+                            self.hitbox.bottom = y*TILESIZE-relx+TILESIZE# +1 #error correction
+                            self.on_ground = True
+                            self.on_slope = True
+                            self.velocity.y = 0
 
     def draw(self):
 
@@ -249,76 +327,3 @@ class Player:
         self.master.debug("wall cling: ", self.wall_clinged)
         self.master.debug("can double jump: ", self.can_double_jump)
         self.master.debug("can dash: ", self.can_dash)
-
-
-
-def do_collision(player:Player, level, axis, master):
-
-    px = int(player.hitbox.centerx / TILESIZE)
-    py = int(player.hitbox.centery / TILESIZE)
-    player.base_rect.midbottom = player.hitbox.midbottom
-    player.base_rect.y += 1
-
-    for y in range(py-1, py+2):
-        for x in range(px-1, px+2):
-
-            if x < 0 or y < 0: continue
-            try:
-                cell =  level.collision[y][x]
-            except IndexError: continue
-
-            rect = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE)
-            if player.has_wall_cling and player.touched_wall and axis == 0 and cell == 3 and rect.colliderect(player.hitbox.inflate(2, 0)):
-                player.on_wall = True
-            if not player.hitbox.colliderect(rect): continue
-            rectg = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, 8)
-
-            if axis == 0: # x-axis
-
-                if cell == 3:
-
-                    if not player.touched_wall:
-                        player.wall_x = player.facing_x * -1
-                    player.touched_wall = True
-
-                    if player.velocity.x > 0:
-                        player.hitbox.right = rect.left
-                    if player.velocity.x < 0:
-                        player.hitbox.left = rect.right
-
-            elif axis == 1: # y-axis
-                if cell == 3 or ( cell == 4 and (rectg.collidepoint(player.hitbox.bottomleft) or rectg.collidepoint(player.hitbox.bottomright)) ):
-
-                        if player.velocity.y > 0:
-                            player.hitbox.bottom = rect.top
-                            player.velocity.y = 0
-                            player.on_ground = True
-
-                if cell == 3:
-                    if player.velocity.y < 0:
-                        player.hitbox.top = rect.bottom
-                        player.velocity.y = 0
-
-            elif axis == 2 and player.velocity.y >= 0: # slopes
-
-                if not rect.colliderect(player.base_rect): continue
-
-                relx = None
-                if cell == 1:
-                    relx = player.hitbox.right - rect.left
-                elif cell == 2:
-                    relx = rect.right - player.hitbox.left
-                else: continue
-                    
-                if relx is not None:
-                    if relx > TILESIZE:
-                        player.hitbox.bottom = rect.top
-                        player.on_ground = True
-                        player.on_slope = True
-                        player.velocity.y = 0
-                    elif player.hitbox.bottom > y*TILESIZE-relx+TILESIZE:
-                        player.hitbox.bottom = y*TILESIZE-relx+TILESIZE# +1 #error correction
-                        player.on_ground = True
-                        player.on_slope = True
-                        player.velocity.y = 0
-                        
