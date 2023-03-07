@@ -14,7 +14,7 @@ class Player:
         self.master.player = self
         self.screen = master.display
 
-        self.animations = import_sprite_sheets("graphics/player/anims")
+        self.animations = import_sprite_sheets("graphics/player/new_anims")
         self.animation = self.animations["idle"]
         self.image = self.animation[0]
         self.rect = self.image.get_rect()
@@ -22,8 +22,8 @@ class Player:
         self.anim_index = 0
         self.anim_speed = 0.15
 
-        self.base_rect = FRect(0, 0, 14, 3)
-        self.hitbox = FRect(32, 0, 13, 28)
+        self.base_rect = FRect(0, 0, 18, 3)
+        self.hitbox = FRect(32, 0, 17, 30)
         self.velocity = pygame.Vector2()
         self.input_x = 0
         self.facing_x = 1
@@ -32,8 +32,9 @@ class Player:
         self.acceleration = 0.5
         self.deceleration = 0.5
         self.jump_power = 7.5
-        self.dash_speed = 8
+        self.dash_speed = 4.5
         self.gravity = 0.32
+        self.terminal_vel = 6
 
         # self.facing_right = True
         self.moving = False
@@ -66,7 +67,9 @@ class Player:
 
     def update_image(self):
 
-        if self.landing: state = "land"
+        if self.dashing: state = "dash"
+        elif self.wall_clinged and self.velocity.y > 0: state = "cling"
+        elif self.landing: state = "land"
         elif self.jumping: state = "jump"
         elif not self.on_ground: state = "midair"
         elif self.moving: state = "run"
@@ -82,13 +85,19 @@ class Player:
             if self.landing: self.landing = False
 
         if self.jumping or self.landing: self.anim_speed = 0.2
+        elif self.dashing: self.anim_speed = 0.25
         elif self.moving: self.anim_speed = 0.15
         else: self.anim_speed = 0.08
 
         self.anim_index += self.anim_speed *self.master.dt
 
         self.image = pygame.transform.flip(image, self.facing_x==-1, False)
-        self.rect.midbottom = self.hitbox.midbottom
+        self.rect = self.image.get_rect(midbottom=self.hitbox.midbottom)
+        if state == "cling":
+            if self.facing_x == 1:
+                self.rect.midright = self.hitbox.midright
+            elif self.facing_x == -1:
+                self.rect.midleft = self.hitbox.midleft
 
     def process_events(self):
 
@@ -124,6 +133,7 @@ class Player:
                     self.JUMP_BUFFER.start(60)
                 if self.has_dash and self.can_dash and event.key in (pygame.K_LSHIFT, pygame.K_LCTRL, pygame.K_j):
                     self.DASH_BUFFER.start(60)
+                    self.anim_index = 0
                 if self.on_one_way_platform and event.key == pygame.K_s:
                     self.NEGATE_PLATFORM_COLLISION.start(500)
                 # if event.key in (pygame.K_ESCAPE, pygame.K_p):
@@ -137,7 +147,7 @@ class Player:
                 self.facing_x = self.wall_x
                 self.velocity.x = 2.5*self.wall_x
                 self.in_control = False
-                self.WALL_JUMP_FOR.start(80)
+                self.WALL_JUMP_FOR.start(100)
             self.velocity.y = -self.jump_power
             self.jumping = True
             self.anim_index = 0
@@ -154,8 +164,8 @@ class Player:
             self.dashing = True
             self.in_control = False
             self.DASH_BUFFER.stop()
-            self.DASH_COOLDOWN.start(400)
-            self.DASH_FOR.start(100)
+            self.DASH_COOLDOWN.start(480)
+            self.DASH_FOR.start(180)
     
     def check_timers(self):
 
@@ -188,10 +198,9 @@ class Player:
 
         self.velocity.y += self.gravity *self.master.dt
 
-        limit_y = 1.7 if self.wall_clinged else 8
+        limit_y = 1.7 if self.wall_clinged else self.terminal_vel
         if self.velocity.y > limit_y:
             self.velocity.y = limit_y
-
 
     def move(self):
 
@@ -232,9 +241,10 @@ class Player:
         if self.power_land > 1 and self.on_ground:
             self.landing = True
             self.anim_index = 0
-            if self.power_land >= 8:
+            if self.power_land >= self.terminal_vel:
                 # self.master.sounds["big_thud"].play()
                 pass
+
     def do_collision(self, axis):
 
         level = self.master.level
@@ -312,6 +322,7 @@ class Player:
 
         self.screen.blit(self.image, self.rect.topleft + self.master.offset)
         # pygame.draw.rect(self.screen, "green", (self.hitbox.x + self.master.offset.x, self.hitbox.y + self.master.offset.y, self.hitbox.width, self.hitbox.height), 1)
+        # pygame.draw.rect(self.screen, "blue", (self.rect.x + self.master.offset.x, self.rect.y + self.master.offset.y, self.rect.width, self.rect.height), 1)
 
     def update(self):
 
