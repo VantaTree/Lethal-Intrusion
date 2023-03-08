@@ -30,7 +30,7 @@ class Player:
         self.acceleration = 0.5
         self.deceleration = 0.5
         self.jump_power = 7.5
-        self.dash_speed = 4.5
+        self.dash_speed = 6
         self.gravity = 0.32
         self.terminal_vel = 6
 
@@ -176,8 +176,8 @@ class Player:
             self.dashing = True
             self.in_control = False
             self.DASH_BUFFER.stop()
-            self.DASH_COOLDOWN.start(480)
-            self.DASH_FOR.start(180)
+            self.DASH_COOLDOWN.start(500)
+            self.DASH_FOR.start(200)
     
     def check_timers(self):
 
