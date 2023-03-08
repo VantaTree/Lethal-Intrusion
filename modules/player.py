@@ -4,8 +4,6 @@ from .frect import FRect
 from .engine import *
 from .config import *
 
-#TODO: Player Movt, https://cryptpad.fr/pad/#/3/pad/edit/53704a288fec495a6656d0bedd99227f/
-
 class Player:
 
     def __init__(self, master):
@@ -36,7 +34,6 @@ class Player:
         self.gravity = 0.32
         self.terminal_vel = 6
 
-        # self.facing_right = True
         self.moving = False
         self.can_double_jump = False
         self.on_ground = True
@@ -64,6 +61,8 @@ class Player:
         self.DASH_FOR = CustomTimer()
         self.WALL_JUMP_FOR = CustomTimer()
         self.NEGATE_PLATFORM_COLLISION = CustomTimer() # one way olatform collsion (4)
+
+        self.money = 0
 
     def update_image(self):
 
@@ -113,11 +112,9 @@ class Player:
         if keys[pygame.K_d]:
             self.input_x += 1
             self.facing_x = 1
-            # self.facing_right = True
         if keys[pygame.K_a]:
             self.input_x -= 1
             self.facing_x = -1
-            # self.facing_right = False
 
         self.moving = bool(self.input_x)
 
@@ -138,6 +135,21 @@ class Player:
                     self.NEGATE_PLATFORM_COLLISION.start(500)
                 # if event.key in (pygame.K_ESCAPE, pygame.K_p):
                 #     self.master.game.pause_game()
+
+                #for testing, temporary
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    raise SystemExit
+                if event.key == pygame.K_o:
+                    mx, my = pygame.mouse.get_pos()
+                    mx = mx/3 - self.master.offset.x
+                    my = my/3 - self.master.offset.y
+                    self.master.coin_system.spawn_coins((mx, my), 3)
+                if event.key == pygame.K_p:
+                    mx, my = pygame.mouse.get_pos()
+                    mx = mx/3 - self.master.offset.x
+                    my = my/3 - self.master.offset.y
+                    self.master.coin_system.spawn_coins((mx, my), 10)
 
         if self.JUMP_BUFFER.running and (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running or self.WALL_CYOTE_TIMER.running or self.can_double_jump):
 
@@ -318,6 +330,9 @@ class Player:
                             self.on_slope = True
                             self.velocity.y = 0
 
+    def collect_coin(self, value):
+        self.money += value
+
     def draw(self):
 
         self.screen.blit(self.image, self.rect.topleft + self.master.offset)
@@ -332,9 +347,10 @@ class Player:
         self.move()
         self.update_image()
 
-        self.master.debug("pos: ", (round(self.hitbox.centerx, 2), round(self.hitbox.bottom, 2)))
-        self.master.debug("moving: ", self.moving)
-        self.master.debug("on ground: ", self.on_ground)
-        self.master.debug("wall cling: ", self.wall_clinged)
-        self.master.debug("can double jump: ", self.can_double_jump)
-        self.master.debug("can dash: ", self.can_dash)
+        self.master.debug("Money: ", self.money)
+        # self.master.debug("pos: ", (round(self.hitbox.centerx, 2), round(self.hitbox.bottom, 2)))
+        # self.master.debug("moving: ", self.moving)
+        # self.master.debug("on ground: ", self.on_ground)
+        # self.master.debug("wall cling: ", self.wall_clinged)
+        # self.master.debug("can double jump: ", self.can_double_jump)
+        # self.master.debug("can dash: ", self.can_dash)

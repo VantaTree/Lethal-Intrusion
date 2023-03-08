@@ -4,6 +4,7 @@ from .config import *
 from .player import Player
 from .world import Level, Camera
 from .path_gen import generate_all_path
+from .economy import load_coin, CoinSystem
 # from .music import Music
 # from .menus import PauseMenu
 
@@ -22,6 +23,8 @@ class Game:
         generate_all_path()
         self.master.offset = pygame.Vector2(0, 0)
 
+        load_coin()
+
         # self.music = Music(master)
         # self.pause_menu = PauseMenu(master)
         self.player = Player(master)
@@ -30,6 +33,8 @@ class Game:
         self.camera = Camera(master, self.player, lambda a:a.hitbox.center)
 
         self.paused = False
+
+        self.coin_system = CoinSystem(master)
 
     def transition_level(self, level_id, trans_id):
 
@@ -56,7 +61,9 @@ class Game:
         self.player.update()
         self.level.update()
         self.camera.update()
+        self.coin_system.update()
 
         self.level.draw_bg()
+        self.coin_system.draw()
         self.player.draw()
         self.level.draw_fg()

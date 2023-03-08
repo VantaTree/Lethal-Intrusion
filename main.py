@@ -22,7 +22,7 @@ class App:
     def __init__(self):
         
         pygame.init()
-        self.screen = pygame.display.set_mode((W, H), pygame.SCALED|pygame.OPENGL|pygame.DOUBLEBUF)
+        self.screen = pygame.display.set_mode((W, H), pygame.SCALED|pygame.OPENGL|pygame.DOUBLEBUF|pygame.FULLSCREEN)
         self.display = pygame.Surface((W, H))
         pygame.display.set_caption("Lethal Intrusion")
         # icon = pygame.image.load("graphics/icon.png").convert()
