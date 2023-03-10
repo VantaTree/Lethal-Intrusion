@@ -20,9 +20,10 @@ def import_spritesheet(folder_path, sheet_name):
     name, size = sheet_name[:-4].split('-')
     w, h = [int(x) for x in size.split('x')]
     sheet = pygame.image.load(F"{folder_path}/{sheet_name}").convert_alpha()
-    for i in range(sheet.get_width()//w):
-        sprite = sheet.subsurface((w*i, 0, w, h))
-        sprite_list.append(sprite)
+    for j in range(sheet.get_height()//h):
+        for i in range(sheet.get_width()//w):
+            sprite = sheet.subsurface((w*i, h*j, w, h))
+            sprite_list.append(sprite)
     return sprite_list
 
 

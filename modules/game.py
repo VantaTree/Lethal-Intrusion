@@ -5,6 +5,7 @@ from .player import Player
 from .world import Level, Camera
 from .path_gen import generate_all_path
 from .economy import load_coin, CoinSystem
+from .effects import load_effects, ParticleEffect
 # from .music import Music
 # from .menus import PauseMenu
 
@@ -24,6 +25,7 @@ class Game:
         self.master.offset = pygame.Vector2(0, 0)
 
         load_coin()
+        load_effects()
 
         # self.music = Music(master)
         # self.pause_menu = PauseMenu(master)
@@ -35,9 +37,11 @@ class Game:
         self.paused = False
 
         self.coin_system = CoinSystem(master)
+        self.particle_effect = ParticleEffect(master)
 
     def transition_level(self, level_id, trans_id):
 
+        del self.level
         self.level = Level(self.master, level_id, trans_id)
         self.master.level = self.level
 
@@ -62,8 +66,10 @@ class Game:
         self.level.update()
         self.camera.update()
         self.coin_system.update()
+        self.particle_effect.update()
 
         self.level.draw_bg()
         self.coin_system.draw()
         self.player.draw()
+        self.particle_effect.draw()
         self.level.draw_fg()

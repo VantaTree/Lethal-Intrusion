@@ -1,5 +1,6 @@
 import pygame
 import random
+from math import sin
 from .frect import FRect
 from .engine import *
 from .config import *
@@ -39,15 +40,19 @@ class Player:
         self.on_ground = True
         self.on_slope = False
         self.on_one_way_platform = False
-        self.jumping = False
-        self.landing = False
-        self.dashing = False
         self.can_dash = True
+        self.can_attack = True
         self.on_wall = False
         self.wall_clinged = False
         self.touched_wall = False
+        self.jumping = False
+        self.landing = False
+        self.dashing = False
+        self.slashing = False
 
         self.in_control = True
+        self.invinsible = False
+        self.hurting = False
 
         self.has_double_jump = True
         self.has_dash = True
@@ -58,16 +63,23 @@ class Player:
         self.WALL_CYOTE_TIMER = CustomTimer()
         self.DASH_BUFFER = CustomTimer()
         self.DASH_COOLDOWN = CustomTimer()
+        self.SLASH_COOLDOWN = CustomTimer()
+        self.SLASH_BUFFER = CustomTimer()
         self.DASH_FOR = CustomTimer()
         self.WALL_JUMP_FOR = CustomTimer()
         self.NEGATE_PLATFORM_COLLISION = CustomTimer() # one way olatform collsion (4)
+        self.INVINSIBILITY_TIMER = CustomTimer()
+        self.HURTING_TIMER = CustomTimer()
 
         self.money = 0
+        self.health = 5
 
     def update_image(self):
 
-        if self.dashing: state = "dash"
+        if self.hurting: state = "hurt"
+        elif self.dashing: state = "dash"
         elif self.wall_clinged and self.velocity.y > 0: state = "cling"
+        elif self.slashing: state = "slash"
         elif self.landing: state = "land"
         elif self.jumping: state = "jump"
         elif not self.on_ground: state = "midair"
@@ -82,8 +94,12 @@ class Player:
 
             if self.jumping: self.jumping = False
             if self.landing: self.landing = False
+            if self.slashing:
+                self.slashing = False
+                self.SLASH_COOLDOWN.start(350)
 
-        if self.jumping or self.landing: self.anim_speed = 0.2
+        if self.slashing: self.anim_speed = 0.2
+        elif self.jumping or self.landing: self.anim_speed = 0.1
         elif self.dashing: self.anim_speed = 0.25
         elif self.moving: self.anim_speed = 0.15
         else: self.anim_speed = 0.08
@@ -97,10 +113,15 @@ class Player:
                 self.rect.midright = self.hitbox.midright
             elif self.facing_x == -1:
                 self.rect.midleft = self.hitbox.midleft
+        if self.hurting:
+            self.image.fill((180, 0, 12), special_flags=pygame.BLEND_RGBA_MIN)
+        elif self.invinsible and sin(pygame.time.get_ticks()/20) > 0.8:
+            self.image.fill((255, 255, 255), special_flags=pygame.BLEND_RGB_MAX)
 
     def process_events(self):
 
         if not self.in_control:
+            pygame.event.clear((pygame.KEYDOWN, pygame.KEYUP))
             self.input_x = 0
             if not self.dashing:
                 self.moving = False
@@ -133,6 +154,9 @@ class Player:
                     self.anim_index = 0
                 if self.on_one_way_platform and event.key == pygame.K_s:
                     self.NEGATE_PLATFORM_COLLISION.start(500)
+                if self.can_attack and not self.wall_clinged and not self.dashing and event.key == pygame.K_k:
+                    self.SLASH_BUFFER.start(60)
+                    
                 # if event.key in (pygame.K_ESCAPE, pygame.K_p):
                 #     self.master.game.pause_game()
 
@@ -150,6 +174,11 @@ class Player:
                     mx = mx/3 - self.master.offset.x
                     my = my/3 - self.master.offset.y
                     self.master.coin_system.spawn_coins((mx, my), 10)
+                if event.key == pygame.K_h and not self.invinsible:
+                    self.moving = False
+                    self.input_x = 0
+                    self.get_hit(None)
+                    return
 
         if self.JUMP_BUFFER.running and (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running or self.WALL_CYOTE_TIMER.running or self.can_double_jump):
 
@@ -178,6 +207,22 @@ class Player:
             self.DASH_BUFFER.stop()
             self.DASH_COOLDOWN.start(500)
             self.DASH_FOR.start(200)
+
+        if self.SLASH_BUFFER.running:
+            self.can_attack = False
+            self.slashing = True
+            self.anim_index = 0
+            self.SLASH_BUFFER.stop()
+
+            if self.facing_x>0:
+                def right(effect):effect.rect.topleft = self.hitbox.midtop
+                move_key = right
+            else:
+                def left(effect):effect.rect.topright = self.hitbox.midtop
+                move_key = left
+
+            self.master.particle_effect.add_effect("attack", "slash", move_key, kill_on_anim=True,
+                    flip=self.facing_x<0, anim_speed=0.2)
     
     def check_timers(self):
 
@@ -186,7 +231,13 @@ class Player:
         self.WALL_CYOTE_TIMER.check()
         self.DASH_BUFFER.check()
         self.DASH_COOLDOWN.check()
+        self.SLASH_BUFFER.check()
         self.NEGATE_PLATFORM_COLLISION.check()
+        if self.HURTING_TIMER.check():
+            self.hurting = False
+            self.in_control = True
+        if self.INVINSIBILITY_TIMER.check():
+            self.invinsible = False
         if self.DASH_FOR.check():
             self.in_control = True
             self.dashing = False
@@ -195,6 +246,8 @@ class Player:
             self.in_control = True
             if self.input_x:
                 self.velocity.x = abs(self.velocity.x) * self.input_x
+        if self.SLASH_COOLDOWN.check():
+            self.can_attack = True
 
     def apply_force(self):
 
@@ -213,6 +266,8 @@ class Player:
         limit_y = 1.7 if self.wall_clinged else self.terminal_vel
         if self.velocity.y > limit_y:
             self.velocity.y = limit_y
+
+        self.master.debug("grav: ", limit_y)
 
     def move(self):
 
@@ -332,6 +387,19 @@ class Player:
 
     def collect_coin(self, value):
         self.money += value
+
+    def get_hit(self, enemy):
+
+        self.health -= 1
+        self.invinsible = True
+        self.hurting = True
+        self.in_control = False
+        self.dashing = False
+        self.touched_wall = False
+        self.velocity.x = 0
+        self.DASH_FOR.stop()
+        self.INVINSIBILITY_TIMER.start(1_000)
+        self.HURTING_TIMER.start(300)
 
     def draw(self):
 
