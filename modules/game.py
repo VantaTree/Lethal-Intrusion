@@ -2,10 +2,10 @@ import pygame
 from .engine import *
 from .config import *
 from .player import Player
-from .world import Level, Camera
+from .world import preload_world_stuff, Level, Camera
 from .path_gen import generate_all_path
-from .economy import load_coin, CoinSystem
-from .effects import load_effects, ParticleEffect
+from .economy import preload_coin, CoinSystem
+from .effects import preload_effects, ParticleEffect
 # from .music import Music
 # from .menus import PauseMenu
 
@@ -24,9 +24,11 @@ class Game:
         generate_all_path()
         self.master.offset = pygame.Vector2(0, 0)
 
-        load_coin()
-        load_effects()
-
+        preload_world_stuff()
+        preload_coin()
+        preload_effects()
+        self.enemy_grp = CustomGroup()
+        
         # self.music = Music(master)
         # self.pause_menu = PauseMenu(master)
         self.player = Player(master)
@@ -63,12 +65,14 @@ class Game:
         #     return
 
         self.player.update()
+        self.enemy_grp.update()
         self.level.update()
         self.camera.update()
         self.coin_system.update()
         self.particle_effect.update()
 
         self.level.draw_bg()
+        self.enemy_grp.draw()
         self.coin_system.draw()
         self.player.draw()
         self.particle_effect.draw()

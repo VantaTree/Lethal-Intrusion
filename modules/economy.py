@@ -6,7 +6,7 @@ from .engine import *
 
 coin_animations:dict[int, list[pygame.Surface]] = {}
 
-def load_coin():
+def preload_coin():
 
     global coin_animations
     # surf = pygame.Surface((16, 16), pygame.SRCALPHA)
@@ -43,7 +43,6 @@ class Coin(pygame.sprite.Sprite):
         self.anim_index = 0
         self.anim_speed = 0.15
         
-        self.gravity = 0.32
         self.velx_resistance = 0.004
         self.terminal_vel = 6
         self.bounce_factor = 0.5
@@ -70,7 +69,7 @@ class Coin(pygame.sprite.Sprite):
         if self.touch_block and not self.on_slope: x_res *= 10
 
         self.velocity = self.velocity.move_towards((0, self.velocity.y), x_res)
-        self.velocity.y += self.gravity * self.master.dt
+        self.velocity.y += GRAVITY * self.master.dt
 
         if self.velocity.y > self.terminal_vel:
             self.velocity.y = self.terminal_vel
@@ -157,7 +156,7 @@ class Coin(pygame.sprite.Sprite):
                             self.touch_block = True
                             self.on_slope = True
                         elif self.hitbox.bottom > y*TILESIZE-relx+TILESIZE:
-                            self.hitbox.bottom = y*TILESIZE-relx+TILESIZE# +1 #error correction
+                            self.hitbox.bottom = y*TILESIZE-relx+TILESIZE
                             self.touch_block = True
                             self.on_slope = True
 

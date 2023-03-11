@@ -32,7 +32,6 @@ class Player:
         self.deceleration = 0.5
         self.jump_power = 7.5
         self.dash_speed = 6
-        self.gravity = 0.32
         self.terminal_vel = 6
 
         self.moving = False
@@ -261,7 +260,7 @@ class Player:
         elif not self.WALL_JUMP_FOR.running:
             self.velocity.move_towards_ip( (0, self.velocity.y), self.deceleration *self.master.dt)
 
-        self.velocity.y += self.gravity *self.master.dt
+        self.velocity.y += GRAVITY *self.master.dt
 
         limit_y = 1.7 if self.wall_clinged else self.terminal_vel
         if self.velocity.y > limit_y:

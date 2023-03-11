@@ -2,3 +2,4 @@ TILESIZE = 16
 # W, H = 1280, 720
 W, H = 1024/2, 576/2
 FPS = 0
+GRAVITY = 0.32

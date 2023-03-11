@@ -5,7 +5,7 @@ from .engine import *
 
 EFFECTS = {}
 
-def load_effects():
+def preload_effects():
 
     EFFECTS.update( import_sprite_sheets("graphics/effects") )
 
