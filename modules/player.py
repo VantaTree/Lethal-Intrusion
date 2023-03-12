@@ -69,9 +69,14 @@ class Player:
         self.NEGATE_PLATFORM_COLLISION = CustomTimer() # one way olatform collsion (4)
         self.INVINSIBILITY_TIMER = CustomTimer()
         self.HURTING_TIMER = CustomTimer()
+        self.WALK_DUST_TIMER = CustomTimer()
+
+        self.WALK_DUST_TIMER.start(1_000, 1)
 
         self.money = 0
         self.health = 5
+
+        master.particle_effect.add_effect("dust", "wall_dust")
 
     def update_image(self):
 
@@ -247,6 +252,10 @@ class Player:
                 self.velocity.x = abs(self.velocity.x) * self.input_x
         if self.SLASH_COOLDOWN.check():
             self.can_attack = True
+        if self.WALK_DUST_TIMER.check():
+            self.WALK_DUST_TIMER.start(300 + 16.667*random.randint(-2, 2), 1)
+            if self.on_ground and self.moving:
+                self.master.particle_effect.add_effect("dust", "step_dust")
 
     def apply_force(self):
 
@@ -308,6 +317,7 @@ class Player:
             self.landing = True
             self.anim_index = 0
             if self.power_land >= self.terminal_vel:
+                self.master.particle_effect.add_effect("dust", "floor_dust")
                 # self.master.sounds["big_thud"].play()
                 pass
 

@@ -31,6 +31,7 @@ class Game:
         
         # self.music = Music(master)
         # self.pause_menu = PauseMenu(master)
+        self.particle_effect = ParticleEffect(master)
         self.player = Player(master)
         self.level = Level(master, "test")
         self.master.level = self.level
@@ -39,7 +40,6 @@ class Game:
         self.paused = False
 
         self.coin_system = CoinSystem(master)
-        self.particle_effect = ParticleEffect(master)
 
     def transition_level(self, level_id, trans_id):
 
@@ -72,8 +72,9 @@ class Game:
         self.particle_effect.update()
 
         self.level.draw_bg()
+        self.particle_effect.grp.draw()
         self.enemy_grp.draw()
         self.coin_system.draw()
         self.player.draw()
-        self.particle_effect.draw()
+        self.particle_effect.attack_grp.draw()
         self.level.draw_fg()
