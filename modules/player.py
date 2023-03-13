@@ -52,6 +52,8 @@ class Player:
         self.in_control = True
         self.invinsible = False
         self.hurting = False
+        self.dying = False
+        self.dead = False
 
         self.has_double_jump = True
         self.has_dash = True
@@ -80,7 +82,9 @@ class Player:
 
     def update_image(self):
 
-        if self.hurting: state = "hurt"
+        if self.dead: state = "dead"
+        elif self.hurting: state = "hurt"
+        elif self.dying: state = "dying"
         elif self.dashing: state = "dash"
         elif self.wall_clinged and self.velocity.y > 0: state = "cling"
         elif self.slashing: state = "slash"
@@ -88,7 +92,7 @@ class Player:
         elif self.jumping: state = "jump"
         elif not self.on_ground: state = "midair"
         elif self.moving: state = "run"
-        else:  state = "idle"
+        else: state = "idle"
 
         try:
             image = self.animations[state][int(self.anim_index)]
@@ -101,6 +105,9 @@ class Player:
             if self.slashing:
                 self.slashing = False
                 self.SLASH_COOLDOWN.start(350)
+            if self.dying and not self.hurting:
+                self.dying = False
+                self.dead = True
 
         if self.slashing: self.anim_speed = 0.2
         elif self.jumping or self.landing: self.anim_speed = 0.1
@@ -119,7 +126,7 @@ class Player:
                 self.rect.midleft = self.hitbox.midleft
         if self.hurting:
             self.image.fill((180, 0, 12), special_flags=pygame.BLEND_RGBA_MIN)
-        elif self.invinsible and sin(pygame.time.get_ticks()/20) > 0.8:
+        elif self.invinsible and not (self.dying or self.dead) and sin(pygame.time.get_ticks()/20) > 0.8:
             self.image.fill((255, 255, 255), special_flags=pygame.BLEND_RGB_MAX)
 
     def process_events(self):
@@ -239,7 +246,8 @@ class Player:
         self.NEGATE_PLATFORM_COLLISION.check()
         if self.HURTING_TIMER.check():
             self.hurting = False
-            self.in_control = True
+            if not self.dying:
+                self.in_control = True
         if self.INVINSIBILITY_TIMER.check():
             self.invinsible = False
         if self.DASH_FOR.check():
@@ -400,6 +408,14 @@ class Player:
     def get_hit(self, enemy):
 
         self.health -= 1
+
+        if self.health <= 0:
+            self.dying = True
+            self.anim_index = 0
+            self.HURTING_TIMER.start(800)
+        else:
+            self.INVINSIBILITY_TIMER.start(1_000)
+            self.HURTING_TIMER.start(300)
         self.invinsible = True
         self.hurting = True
         self.in_control = False
@@ -407,8 +423,6 @@ class Player:
         self.touched_wall = False
         self.velocity.x = 0
         self.DASH_FOR.stop()
-        self.INVINSIBILITY_TIMER.start(1_000)
-        self.HURTING_TIMER.start(300)
 
     def draw(self):
 
@@ -424,6 +438,7 @@ class Player:
         self.move()
         self.update_image()
 
+        self.master.debug("Health: ", self.health)
         self.master.debug("Money: ", self.money)
         # self.master.debug("pos: ", (round(self.hitbox.centerx, 2), round(self.hitbox.bottom, 2)))
         # self.master.debug("moving: ", self.moving)
