@@ -7,6 +7,7 @@ from .path_gen import generate_all_path
 from .economy import preload_coin, CoinSystem
 from .effects import preload_effects, ParticleEffect
 from .menus import PauseMenu, DeathMenu
+from .ui import UI
 # from .music import Music
 
 class Game:
@@ -42,6 +43,7 @@ class Game:
         self.death_screen = False
 
         self.coin_system = CoinSystem(master)
+        self.ui = UI(master)
 
     def transition_level(self, level_id, trans_id, direc):
 
@@ -52,7 +54,7 @@ class Game:
         if direc in ("right", "left"):
             self.player.velocity.update(self.player.max_speed*self.player.facing_x, 0)
         else: self.player.velocity.update(0, 0)
-        
+
         self.player.jumping = False
         self.player.landing = False
 
@@ -89,6 +91,7 @@ class Game:
         self.camera.update()
         self.coin_system.update()
         self.particle_effect.update()
+        self.ui.update()
 
         self.level.draw_bg()
         self.particle_effect.grp.draw()
@@ -97,3 +100,4 @@ class Game:
         self.player.draw()
         self.particle_effect.attack_grp.draw()
         self.level.draw_fg()
+        self.ui.draw()

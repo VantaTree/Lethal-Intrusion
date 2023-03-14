@@ -11,11 +11,16 @@ class Debug:
         self.offset = offset
         self.font = pygame.font.SysFont("Sitka Small", self.font_size)
         self.surf_enabled = surf_enabled
+        self.on = True
 
     def __call__(self, name, value):
+        
+        if not self.on: return
         self.debug_list.append(name + str(value))
 
     def draw(self):
+
+        if not self.on: return
 
         if self.surf_enabled:
             self.screen.blit(self.surface, (0, 0))

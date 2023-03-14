@@ -173,6 +173,8 @@ class Player:
                     self.master.game.pause_game()
 
                 #for testing, temporary
+                if event.key == pygame.K_f:
+                    self.master.debug.on = not self.master.debug.on
                 if event.key == pygame.K_i:
                     mx, my = get_mouse_pos(self.master)
                     self.master.coin_system.spawn_coins(
@@ -280,8 +282,6 @@ class Player:
         limit_y = 1.7 if self.wall_clinged else self.terminal_vel
         if self.velocity.y > limit_y:
             self.velocity.y = limit_y
-
-        self.master.debug("grav: ", limit_y)
 
     def move(self):
 
