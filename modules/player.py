@@ -72,6 +72,7 @@ class Player:
         self.INVINSIBILITY_TIMER = CustomTimer()
         self.HURTING_TIMER = CustomTimer()
         self.WALK_DUST_TIMER = CustomTimer()
+        self.DEATH_SCREEN_TIMER = CustomTimer()
 
         self.WALK_DUST_TIMER.start(1_000, 1)
 
@@ -168,23 +169,18 @@ class Player:
                 if self.can_attack and not self.wall_clinged and not self.dashing and event.key == pygame.K_k:
                     self.SLASH_BUFFER.start(60)
                     
-                # if event.key in (pygame.K_ESCAPE, pygame.K_p):
-                #     self.master.game.pause_game()
+                if event.key in (pygame.K_ESCAPE, pygame.K_p):
+                    self.master.game.pause_game()
 
                 #for testing, temporary
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    raise SystemExit
+                if event.key == pygame.K_i:
+                    mx, my = get_mouse_pos(self.master)
+                    self.master.coin_system.spawn_coins(
+                        (mx-self.master.offset.x, my-self.master.offset.y), 3)
                 if event.key == pygame.K_o:
-                    mx, my = pygame.mouse.get_pos()
-                    mx = mx/3 - self.master.offset.x
-                    my = my/3 - self.master.offset.y
-                    self.master.coin_system.spawn_coins((mx, my), 3)
-                if event.key == pygame.K_p:
-                    mx, my = pygame.mouse.get_pos()
-                    mx = mx/3 - self.master.offset.x
-                    my = my/3 - self.master.offset.y
-                    self.master.coin_system.spawn_coins((mx, my), 10)
+                    mx, my = get_mouse_pos(self.master)
+                    self.master.coin_system.spawn_coins(
+                        (mx-self.master.offset.x, my-self.master.offset.y), 10)
                 if event.key == pygame.K_h and not self.invinsible:
                     self.moving = False
                     self.input_x = 0
@@ -264,6 +260,8 @@ class Player:
             self.WALK_DUST_TIMER.start(300 + 16.667*random.randint(-2, 2), 1)
             if self.on_ground and self.moving:
                 self.master.particle_effect.add_effect("dust", "step_dust")
+        if self.DEATH_SCREEN_TIMER.check():
+            self.master.game.open_death_screen()
 
     def apply_force(self):
 
@@ -413,6 +411,7 @@ class Player:
             self.dying = True
             self.anim_index = 0
             self.HURTING_TIMER.start(800)
+            self.DEATH_SCREEN_TIMER.start(4_000)
         else:
             self.INVINSIBILITY_TIMER.start(1_000)
             self.HURTING_TIMER.start(300)
@@ -423,6 +422,13 @@ class Player:
         self.touched_wall = False
         self.velocity.x = 0
         self.DASH_FOR.stop()
+
+    def reset(self):
+
+        self.in_control = True
+        self.dead = False
+        self.health = 5
+        self.invinsible = False
 
     def draw(self):
 

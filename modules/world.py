@@ -165,7 +165,7 @@ class Level:
                     pass
                 else: continue
 
-                self.master.game.transition_level(obj.properties["room_to"], obj.properties["transition_to"])
+                self.master.game.transition_level(obj.properties["room_to"], obj.properties["transition_to"], direc)
 
 
     def update(self):

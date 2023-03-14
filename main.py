@@ -2,6 +2,7 @@ import pygame
 import pygame_shaders
 import asyncio
 from modules import *
+import pygame._sdl2 as sdl2
 
 class Master:
 
@@ -12,6 +13,11 @@ class Master:
         self.dt:float
         self.offset:pygame.Vector2
         self.display:pygame.Surface
+        self.window: sdl2.Window
+
+        self.font_1 = pygame.font.Font("fonts/PixelOperator.ttf", 14)
+        self.font = pygame.font.Font("fonts/PixelOperator-Bold.ttf", 18)
+        self.font_big = pygame.font.Font("fonts/PixelOperator.ttf", 32)
 
 
 class App:
@@ -22,7 +28,7 @@ class App:
     def __init__(self):
         
         pygame.init()
-        self.screen = pygame.display.set_mode((W, H), pygame.SCALED|pygame.OPENGL|pygame.DOUBLEBUF|pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((W, H), pygame.SCALED|pygame.OPENGL|pygame.DOUBLEBUF)
         self.display = pygame.Surface((W, H))
         pygame.display.set_caption("Lethal Intrusion")
         # icon = pygame.image.load("graphics/icon.png").convert()
@@ -32,16 +38,17 @@ class App:
         self.shader = pygame_shaders.Shader((W, H), (W, H), (0, 0), "shaders/default_vertex.glsl", 
                         "shaders/default_fragment.glsl", self.display)
 
-        self.state = self.IN_GAME
+        self.state = self.MAIN_MENU
 
         self.master = Master()
         self.master.display = self.display
         self.master.app = self
+        self.master.window = sdl2.Window.from_display_module()
         self.debug = Debug(self.display, 14, 7)
         self.master.debug = self.debug
         self.game = Game(self.master)
-        # SoundSet(self.master)
-        # self.main_menu = MainMenu(self.master)
+        self.main_menu = MainMenu(self.master)
+        SoundSet(self.master)
 
     async def run(self):
         
@@ -68,7 +75,9 @@ class App:
 
     def run_states(self):
 
-        if self.state == self.IN_GAME:
+        if self.state == self.MAIN_MENU:
+            self.main_menu.run()
+        elif self.state == self.IN_GAME:
             self.game.run()
 
 if __name__ == "__main__":

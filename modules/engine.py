@@ -1,4 +1,5 @@
 import pygame, os
+from .config import *
 # from PIL import Image, ImageFilter
 
 class CustomGroup(pygame.sprite.Group):
@@ -52,6 +53,13 @@ def load_pngs(folder_path):
 def dist_sq(p1, p2):
 
     return (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
+
+def get_mouse_pos(master) -> tuple[int, int]:
+
+    mx, my = pygame.mouse.get_pos()
+    wx, wy = master.window.size
+
+    return int(mx/wx * W), int(my/wy * H)
 
 class CustomTimer:
 

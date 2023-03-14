@@ -1,5 +1,5 @@
-from os import listdir
 import pygame
+from os import listdir
 
 class SoundSet:
 
@@ -8,7 +8,11 @@ class SoundSet:
         self.dict:dict[str, pygame.mixer.Sound] = {}
         
         self.master = master
-        self.master.sounds = self.dict
+        self.master.sounds = self
 
         for sound_file in listdir("sounds"):
             self.dict[sound_file[:-4]] = pygame.mixer.Sound(F"sounds/{sound_file}")
+
+    def __getitem__(self, key):
+
+        return self.dict[key]

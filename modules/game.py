@@ -6,8 +6,8 @@ from .world import preload_world_stuff, Level, Camera
 from .path_gen import generate_all_path
 from .economy import preload_coin, CoinSystem
 from .effects import preload_effects, ParticleEffect
+from .menus import PauseMenu, DeathMenu
 # from .music import Music
-# from .menus import PauseMenu
 
 class Game:
 
@@ -30,7 +30,8 @@ class Game:
         self.enemy_grp = CustomGroup()
         
         # self.music = Music(master)
-        # self.pause_menu = PauseMenu(master)
+        self.pause_menu = PauseMenu(master)
+        self.death_menu = DeathMenu(master)
         self.particle_effect = ParticleEffect(master)
         self.player = Player(master)
         self.level = Level(master, "test")
@@ -38,31 +39,49 @@ class Game:
         self.camera = Camera(master, self.player, lambda a:a.hitbox.center)
 
         self.paused = False
+        self.death_screen = False
 
         self.coin_system = CoinSystem(master)
 
-    def transition_level(self, level_id, trans_id):
+    def transition_level(self, level_id, trans_id, direc):
 
         del self.level
         self.level = Level(self.master, level_id, trans_id)
         self.master.level = self.level
 
+        if direc in ("right", "left"):
+            self.player.velocity.update(self.player.max_speed*self.player.facing_x, 0)
+        else: self.player.velocity.update(0, 0)
+        
+        self.player.jumping = False
+        self.player.landing = False
+
     def pause_game(self):
 
         if not self.paused:
             self.paused = True
+            
             self.pause_menu.open()
+
+    def open_death_screen(self):
+
+        self.paused = True
+        self.death_screen = True
+        self.death_menu.open()
 
     def run(self):
 
         pass
 
         # self.music.run()
-
-        # if self.paused:
-        #     self.pause_menu.draw()
-        #     self.pause_menu.update()
-        #     return
+        if self.death_screen:
+            self.death_menu.update()
+            self.death_menu.draw()
+            return
+        elif self.paused:
+            self.pause_menu.update()
+            self.pause_menu.draw()
+            return
 
         self.player.update()
         self.enemy_grp.update()
