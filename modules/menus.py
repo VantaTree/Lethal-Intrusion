@@ -79,7 +79,7 @@ class MainMenu():
                 for button in self.buttons:
                     action = button.interact(get_mouse_pos(self.master), click=True)
                     if action == 'start':
-                        # self.master.music.change_track("in_game")
+                        self.master.music.change_track("tunnel")
                         # self.master.sounds["click"].play()
                         self.master.app.state = self.master.app.IN_GAME
                     elif action == 'fullscreen':
@@ -212,6 +212,7 @@ class DeathMenu():
                         self.master.app.state = self.master.app.MAIN_MENU
                         self.master.game.paused = False
                         self.master.game.death_screen = False
+                        self.master.music.change_track("main_menu")
                     elif action == 'quit':
                         pygame.quit()
                         raise SystemExit

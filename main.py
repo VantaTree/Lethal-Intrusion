@@ -49,6 +49,7 @@ class App:
         self.game = Game(self.master)
         self.main_menu = MainMenu(self.master)
         SoundSet(self.master)
+        self.music = Music(self.master)
 
     async def run(self):
         
@@ -74,6 +75,8 @@ class App:
             self.shader.render(self.display)
 
     def run_states(self):
+
+        self.music.run()
 
         if self.state == self.MAIN_MENU:
             self.main_menu.run()

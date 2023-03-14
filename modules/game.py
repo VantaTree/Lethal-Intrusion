@@ -8,7 +8,6 @@ from .economy import preload_coin, CoinSystem
 from .effects import preload_effects, ParticleEffect
 from .menus import PauseMenu, DeathMenu
 from .ui import UI
-# from .music import Music
 
 class Game:
 
@@ -30,7 +29,6 @@ class Game:
         preload_effects()
         self.enemy_grp = CustomGroup()
         
-        # self.music = Music(master)
         self.pause_menu = PauseMenu(master)
         self.death_menu = DeathMenu(master)
         self.particle_effect = ParticleEffect(master)
@@ -75,7 +73,6 @@ class Game:
 
         pass
 
-        # self.music.run()
         if self.death_screen:
             self.death_menu.update()
             self.death_menu.draw()

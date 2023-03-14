@@ -7,11 +7,11 @@ class Music:
         self.master = master
         master.music = self
         self.tracks = {
-            'in_game': "music/game_music.ogg"
+            "tunnel": "music/Tunnel theme.ogg",
+            "maze": "music/Intestine Maze.ogg",
+            "heart": "music/Blood Blower.ogg",
+            "main_menu": "music/Menu theme.ogg"
         }
-        # track_type = "main_menu"
-        # if self.master.app.state == self.master.app.IN_GAME: track_type = 'in_game'
-        # pygame.mixer.music.load(self.tracks[track_type])
         self.is_playing = False
         self.can_play = True
         self.started_playing = False
@@ -19,8 +19,13 @@ class Music:
         self.is_loaded = False
 
         self.change_track_to = None
+        self.current_track = None
 
         self.START_NEW_TRACK_TIMER = CustomTimer()
+
+        self.START_NEW_TRACK_TIMER.start(500)
+        self.change_track_to = "main_menu"
+
 
     def change_track(self, track_type):
         delay = 0
@@ -35,11 +40,9 @@ class Music:
         if self.START_NEW_TRACK_TIMER.check():
             pygame.mixer.music.load(self.tracks[self.change_track_to])
             pygame.mixer.music.play(loops=-1, fade_ms=2_000)
-            if self.change_track_to == 'in_game':
-                    pygame.mixer.music.set_volume(0.4)
+            self.current_track = self.change_track_to
             self.change_track_to = None
             self.is_loaded = True
-
     
     def run(self):
 
@@ -53,11 +56,11 @@ class Music:
             if not self.started_playing:
                 pygame.mixer.music.play(loops=-1, fade_ms= 2_000)
                 self.started_playing = True
-        #     else:
-        #         pygame.mixer.music.unpause()
+            else:
+                pygame.mixer.music.unpause()
 
-        #     self.is_playing = True
+            self.is_playing = True
 
-        # elif not self.can_play and self.is_playing:
-        #     pygame.mixer.music.pause()
-        #     self.is_playing = False
+        elif not self.can_play and self.is_playing:
+            pygame.mixer.music.pause()
+            self.is_playing = False
