@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#4b3916" nextlayerid="22" nextobjectid="9">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#4b3916" nextlayerid="23" nextobjectid="10">
  <editorsettings>
   <export target="../../../tiled_doc_stuff/output/test.csv" format="csv"/>
  </editorsettings>
