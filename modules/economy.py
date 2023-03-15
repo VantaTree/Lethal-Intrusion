@@ -34,6 +34,7 @@ class Coin(pygame.sprite.Sprite):
             size = 8
         self.hitbox = FRect(0, 0, size, size)
         self.base_rect = FRect(0, 0, size+1, 2)
+        self.top_rect = FRect(0, 0, size+1, 2)
         self.hitbox.center = pos
 
         self.animation = coin_animations[str(value)]
@@ -102,6 +103,8 @@ class Coin(pygame.sprite.Sprite):
         
         self.base_rect.midbottom = self.hitbox.midbottom
         self.base_rect.y += 1
+        self.top_rect.midtop = self.hitbox.midtop
+        self.top_rect.y -= 1
 
         for y in range(py1, py2+1):
             for x in range(px1, px2+1):
@@ -139,18 +142,17 @@ class Coin(pygame.sprite.Sprite):
                     if cell in (3, 4):
                         self.velocity.y *= -self.bounce_factor
 
-                elif axis == 2 and self.velocity.y >= 0: # slopes
+                elif axis == 2: # slopes
 
-                    if not rect.colliderect(self.base_rect): continue
+                    if cell in (1, 2) and self.velocity.y >= 0 and rect.colliderect(self.base_rect):
 
-                    relx = None
-                    if cell == 1:
-                        relx = self.hitbox.right - rect.left
-                    elif cell == 2:
-                        relx = rect.right - self.hitbox.left
-                    else: continue
+                        relx = None
+                        if cell == 1:
+                            relx = self.hitbox.right - rect.left
+                        elif cell == 2:
+                            relx = rect.right - self.hitbox.left
+                        else: continue
                         
-                    if relx is not None:
                         if relx > TILESIZE:
                             self.hitbox.bottom = rect.top
                             self.touch_block = True
@@ -167,6 +169,30 @@ class Coin(pygame.sprite.Sprite):
                             elif cell == 2:
                                 self.velocity.reflect_ip((0.1, -1))
 
+                    if cell in (5, 6) and self.velocity.y <= 0 and rect.colliderect(self.top_rect):
+
+                        relx = None
+                        if cell == 5:
+                            relx = self.hitbox.right - rect.left
+                        elif cell == 6:
+                            relx = rect.right - self.hitbox.left
+                        else: continue
+
+                        if relx > TILESIZE:
+                            self.hitbox.top = rect.bottom
+                            self.touch_block = True
+                            self.on_slope = True
+                        elif self.hitbox.top < y*TILESIZE+relx:
+                            self.hitbox.top = y*TILESIZE+relx
+                            self.touch_block = True
+                            self.on_slope = True
+
+                        if self.on_slope:
+                            self.velocity *= self.bounce_factor
+                            if cell == 5:
+                                self.velocity.reflect_ip((-0.1, 1))
+                            elif cell == 6:
+                                self.velocity.reflect_ip((0.1, 1))
 
     def draw(self):
 

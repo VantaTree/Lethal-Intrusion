@@ -70,5 +70,3 @@ def generate_all_path():
         if not file.endswith(".tmx") or file == "template.tmx": continue
 
         generate_path(file[:-4])
-
-generate_all_path()

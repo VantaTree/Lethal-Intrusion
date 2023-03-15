@@ -21,7 +21,7 @@ class Game:
         self.master.game = self
         self.screen = master.display
 
-        generate_all_path()
+        # generate_all_path()
         self.master.offset = pygame.Vector2(0, 0)
 
         preload_world_stuff()
