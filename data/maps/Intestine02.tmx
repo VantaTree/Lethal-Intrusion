@@ -50,14 +50,14 @@
 </data>
  </layer>
  <objectgroup id="3" name="Transition Region">
-  <object id="2" name="Next_I03" x="512.667" y="0" width="108" height="287.333"/>
+  <object id="2" name="Next_I03_01" x="512.667" y="0" width="108" height="287.333"/>
   <object id="3" name="Next_I01" x="-132.667" y="0" width="132" height="288.667"/>
  </objectgroup>
  <objectgroup id="6" name="Transition Spawn">
-  <object id="4" name="Next_I01" x="8" y="212.5">
+  <object id="4" name="Next_I02_01" x="8" y="212.5">
    <point/>
   </object>
-  <object id="5" name="Next_I03" x="502.5" y="166.5">
+  <object id="5" name="Next_I02_02" x="502.5" y="166.5">
    <point/>
   </object>
  </objectgroup>

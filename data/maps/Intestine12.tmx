@@ -3,8 +3,8 @@
  <tileset firstgid="1" source="Intestine_TS01.tsx"/>
  <tileset firstgid="31" source="../tsx_data/collision.tsx"/>
  <objectgroup id="3" name="Transition Region">
-  <object id="4" name="Next_I11_01" x="-80" y="-5.33333" width="79.3333" height="164"/>
-  <object id="5" name="Next_I11_02" x="-81.3333" y="193.333" width="80.6667" height="98"/>
+  <object id="4" name="Next_I11_02" x="-80" y="-5.33333" width="79.3333" height="164"/>
+  <object id="5" name="Next_I11_03" x="-81.3333" y="193.333" width="80.6667" height="98"/>
  </objectgroup>
  <imagelayer id="5" name="Background">
   <image source="../../../../Users/viczi/Downloads/Bg2.png" width="512" height="288"/>
@@ -54,10 +54,10 @@
 </data>
  </layer>
  <objectgroup id="6" name="Transition Spawn">
-  <object id="2" name="Next_I11_01" x="8.66667" y="116.667">
+  <object id="2" name="Next_I12_01" x="8.66667" y="116.667">
    <point/>
   </object>
-  <object id="3" name="Next_I11_02" x="9.33333" y="260">
+  <object id="3" name="Next_I12_02" x="9.33333" y="260">
    <point/>
   </object>
  </objectgroup>

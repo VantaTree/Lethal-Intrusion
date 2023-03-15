@@ -56,16 +56,16 @@
   <object id="11" name="Next_I12_02" x="512.5" y="194.5" width="68" height="89.5"/>
  </objectgroup>
  <objectgroup id="5" name="Transition Spawn">
-  <object id="3" name="Next_I09_01" x="416" y="10">
+  <object id="3" name="Next_I11_01" x="416" y="10">
    <point/>
   </object>
-  <object id="4" name="Next_I12_01" x="502" y="116">
+  <object id="4" name="Next_I11_02" x="502" y="116">
    <point/>
   </object>
-  <object id="5" name="Next_I12_02" x="503" y="257.5">
+  <object id="5" name="Next_I11_03" x="503" y="257.5">
    <point/>
   </object>
-  <object id="6" name="Next_I09_02" x="293" y="15">
+  <object id="6" name="Next_I11_04" x="293" y="15">
    <point/>
   </object>
  </objectgroup>

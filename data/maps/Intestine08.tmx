@@ -50,15 +50,15 @@
 </data>
  </layer>
  <objectgroup id="5" name="Transition Spawn">
-  <object id="2" name="Next_I07" x="502.5" y="230.5">
+  <object id="2" name="Next_I08_01" x="502.5" y="230.5">
    <point/>
   </object>
-  <object id="3" name="Next_I10" x="422.5" y="9">
+  <object id="3" name="Next_I08_02" x="422.5" y="9">
    <point/>
   </object>
  </objectgroup>
  <objectgroup id="3" name="Transition Region">
-  <object id="1" name="Next_I10" x="-0.666667" y="-57.3333" width="512.667" height="58"/>
-  <object id="4" name="Next_I07" x="512" y="68.5" width="75" height="193"/>
+  <object id="1" name="Next_I10_01" x="-0.666667" y="-57.3333" width="512.667" height="58"/>
+  <object id="4" name="Next_I07_03" x="512" y="68.5" width="75" height="193"/>
  </objectgroup>
 </map>
