@@ -23,7 +23,7 @@ class Level:
         self.data = load_pygame(F"data/maps/{self.map_type}.tmx")
         self.size = self.data.width, self.data.height
 
-        self.path_data = self.load_csv(F"data/map_paths/{self.map_type}.csv", True)
+        # self.path_data = self.load_csv(F"data/map_paths/{self.map_type}.csv", True)
         self.get_collision_data()
         self.get_draw_layers()
         self.get_object_layers()
@@ -178,6 +178,7 @@ class Level:
     def update(self):
 
         self.check_player_transitions()
+        self.master.debug("lvl: ", self.map_type)
 
 
 class Camera:
