@@ -35,7 +35,7 @@
     <property name="direction" value="down"/>
     <property name="index" type="int" value="0"/>
     <property name="room_to" value="Heart01"/>
-    <property name="transition_to" type="int" value="3"/>
+    <property name="transition_to" type="int" value="2"/>
    </properties>
   </object>
   <object id="4" name="transition_1" x="282.5" y="288" width="177" height="66.5">
@@ -43,7 +43,7 @@
     <property name="direction" value="down"/>
     <property name="index" type="int" value="1"/>
     <property name="room_to" value="Heart01"/>
-    <property name="transition_to" type="int" value="0"/>
+    <property name="transition_to" type="int" value="3"/>
    </properties>
   </object>
   <object id="12" name="transition_2" x="-82.5" y="66.5" width="82" height="209">
