@@ -21,7 +21,7 @@
    </properties>
    <point/>
   </object>
-  <object id="8" name="transition_spawn_2" x="254.667" y="266.667">
+  <object id="8" name="transition_spawn_2" x="264" y="220.667">
    <properties>
     <property name="index" type="int" value="2"/>
    </properties>
@@ -34,7 +34,7 @@
     <property name="direction" value="down"/>
     <property name="index" type="int" value="2"/>
     <property name="room_to" value="Intestine07"/>
-    <property name="transition_to" type="int" value="0"/>
+    <property name="transition_to" type="int" value="2"/>
    </properties>
   </object>
   <object id="2" name="transition_1" x="-102.5" y="118.167" width="102" height="127.5">

@@ -91,8 +91,11 @@ class Level:
     def draw_bg(self):
 
         pygame_shaders.clear((0, 0, 0))
+        
         if self.data.background_color:
             self.screen.fill(self.data.background_color)
+        else:
+            self.screen.fill((255, 0, 255))
 
         for layer in self.bg_layers:
             if isinstance(layer, pytmx.TiledImageLayer):

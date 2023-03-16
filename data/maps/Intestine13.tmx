@@ -10,7 +10,7 @@
  <tileset firstgid="31" source="../tsx_data/collision.tsx"/>
  <tileset firstgid="38" source="../tsx_data/enemies.tsx"/>
  <objectgroup id="4" name="transition_spawn">
-  <object id="4" name="transition_spawn_0" x="427" y="248.5">
+  <object id="4" name="transition_spawn_0" x="391.5" y="217.5">
    <properties>
     <property name="index" type="int" value="1"/>
    </properties>

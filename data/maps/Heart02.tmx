@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="13">
+ <properties>
+  <property name="bg_layers" type="int" value="1"/>
+  <property name="fg_layers" type="int" value="0"/>
+  <property name="name" value="Heart02"/>
+  <property name="tile_map_layers" type="int" value="1"/>
+ </properties>
  <tileset firstgid="1" source="Intestine_TS01.tsx"/>
  <tileset firstgid="31" source="../tsx_data/enemies.tsx"/>
  <tileset firstgid="33" source="../tsx_data/collision.tsx"/>

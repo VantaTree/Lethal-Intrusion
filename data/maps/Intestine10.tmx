@@ -9,13 +9,13 @@
  <tileset firstgid="1" source="Intestine_TS01.tsx"/>
  <tileset firstgid="31" source="../tsx_data/collision.tsx"/>
  <objectgroup id="5" name="transition_spawn">
-  <object id="2" name="transition_spawn_0" x="447.999" y="278.666">
+  <object id="2" name="transition_spawn_0" x="451.332" y="260.666">
    <properties>
     <property name="index" type="int" value="0"/>
    </properties>
    <point/>
   </object>
-  <object id="3" name="transition_spawn_1" x="502.667" y="195.333">
+  <object id="3" name="transition_spawn_1" x="500.667" y="196">
    <properties>
     <property name="index" type="int" value="1"/>
    </properties>
