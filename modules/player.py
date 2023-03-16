@@ -21,7 +21,7 @@ class Player:
         self.anim_index = 0
         self.anim_speed = 0.15
 
-        self.hitbox = FRect(32, 0, 17, 30)
+        self.hitbox = FRect(8*16, 11*16, 17, 30)
         self.top_rect = FRect(0, 0, 18, 3)
         self.base_rect = FRect(0, 0, 18, 3)
         self.velocity = pygame.Vector2()
