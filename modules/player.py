@@ -225,14 +225,14 @@ class Player:
             self.SLASH_BUFFER.stop()
 
             if self.facing_x>0:
-                def right(effect):effect.rect.topleft = self.hitbox.midtop
+                def right(effect):effect.rect.topleft = self.hitbox.topleft
                 move_key = right
             else:
-                def left(effect):effect.rect.topright = self.hitbox.midtop
+                def left(effect):effect.rect.topright = self.hitbox.topright
                 move_key = left
 
             self.master.particle_effect.add_effect("attack", "slash", move_key, kill_on_anim=True,
-                    flip=self.facing_x<0, anim_speed=0.2)
+                    flip=self.facing_x<0, anim_speed=0.3)
     
     def check_timers(self):
 
@@ -452,7 +452,7 @@ class Player:
     def draw(self):
 
         self.screen.blit(self.image, self.rect.topleft + self.master.offset)
-        pygame.draw.rect(self.screen, "blue", (self.hitbox.x + self.master.offset.x, self.hitbox.y + self.master.offset.y, self.hitbox.width, self.hitbox.height), 1)
+        # pygame.draw.rect(self.screen, "green", (self.hitbox.x + self.master.offset.x, self.hitbox.y + self.master.offset.y, self.hitbox.width, self.hitbox.height), 1)
         # pygame.draw.rect(self.screen, "blue", (self.rect.x + self.master.offset.x, self.rect.y + self.master.offset.y, self.rect.width, self.rect.height), 1)
 
     def update(self):
