@@ -8,7 +8,7 @@ ENEMIES:dict[str, dict[str, list[pygame.Surface]]] = {}
 
 def preload_enemies():
 
-    for name in ("crawler",):
+    for name in ("crawler", "spitter"):
         ENEMIES[name] = import_sprite_sheets(F"graphics/enemies/{name}")
 
 #states:
@@ -17,6 +17,7 @@ IDLE = 0
 AGRO = 1
 FOLLOW = 2
 ATTACK = 3
+LUNGE = 4
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -265,3 +266,32 @@ class Crawler(Enemy):
 
         self.state_manager()
         super().update()
+
+class Spitter(Enemy):
+
+    def __init__(self, master, grps, flip, pos):
+
+        super().__init__(master, grps, "spitter", flip, pos, (14, 14), 0, 0, 0, 200)
+
+        self.state = IDLE
+
+    def state_manager(self):
+
+        player = self.master.player
+        self.input_x = 0
+
+        if self.state == IDLE:
+            if dist_sq(player.hitbox.center, self.hitbox.center) < 128**2:
+                self.state = AGRO
+
+                # self.state = ATTACK
+                # self.attacking = True
+                # self.anim_index = 0
+        if self.state == ATTACK and not self.attacking:
+            self.state = AGRO
+
+    def update(self):
+        
+        self.state_manager()
+        self.check_timers()
+        self.update_image()
