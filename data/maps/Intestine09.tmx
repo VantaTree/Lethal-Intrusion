@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="18">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="23">
  <properties>
   <property name="bg_layers" type="int" value="1"/>
   <property name="fg_layers" type="int" value="0"/>
@@ -8,6 +8,7 @@
  </properties>
  <tileset firstgid="1" source="Intestine_TS01.tsx"/>
  <tileset firstgid="31" source="../tsx_data/collision.tsx"/>
+ <tileset firstgid="38" source="../tsx_data/enemies.tsx"/>
  <objectgroup id="5" name="transition_spawn">
   <object id="7" name="transition_spawn_0" x="10.5" y="99">
    <properties>
@@ -15,13 +16,19 @@
    </properties>
    <point/>
   </object>
-  <object id="9" name="transition_spawn_2" x="453.5" y="8.5">
+  <object id="9" name="transition_spawn_3" x="453.5" y="8.5">
+   <properties>
+    <property name="index" type="int" value="3"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="15" name="transition_spawn_2" x="262.5" y="278.5">
    <properties>
     <property name="index" type="int" value="2"/>
    </properties>
    <point/>
   </object>
-  <object id="15" name="transition_spawn_1" x="262.5" y="278.5">
+  <object id="22" name="transition_spawn_1" x="421.333" y="272.667">
    <properties>
     <property name="index" type="int" value="1"/>
    </properties>
@@ -50,7 +57,7 @@
     <property name="direction" value="down"/>
     <property name="index" type="int" value="2"/>
     <property name="room_to" value="Intestine11"/>
-    <property name="transition_to" type="int" value="1"/>
+    <property name="transition_to" type="int" value="2"/>
    </properties>
   </object>
   <object id="17" name="transition_1" x="361" y="288" width="119.5" height="77">
@@ -58,7 +65,7 @@
     <property name="direction" value="down"/>
     <property name="index" type="int" value="1"/>
     <property name="room_to" value="Intestine11"/>
-    <property name="transition_to" type="int" value="0"/>
+    <property name="transition_to" type="int" value="3"/>
    </properties>
   </object>
  </objectgroup>
@@ -93,6 +100,12 @@
 14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,30,30,22,23,7,8,8,9,16,0,0,0,0,0,7,14,14
 </data>
  </layer>
+ <objectgroup id="6" name="enemy_trigger"/>
+ <objectgroup id="7" name="enemies">
+  <object id="19" name="enemy_0" gid="38" x="328" y="160" width="32" height="32"/>
+  <object id="20" name="enemy_2" gid="38" x="317" y="255.5" width="32" height="32"/>
+  <object id="21" name="enemy_1" gid="39" x="124" y="112" width="48" height="32"/>
+ </objectgroup>
  <layer id="2" name="collision" width="32" height="18">
   <data encoding="csv">
 31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,31,31,31,34,31,31,
