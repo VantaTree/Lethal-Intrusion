@@ -63,7 +63,7 @@
    <properties>
     <property name="direction" value="right"/>
     <property name="index" type="int" value="2"/>
-    <property name="room_to" value="Intestine02"/>
+    <property name="room_to" value="Intestine13"/>
     <property name="transition_to" type="int" value="0"/>
    </properties>
   </object>
