@@ -113,6 +113,12 @@ class Level:
                     pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE), 1)
                 elif cell == 4:
                     pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE//4), 1)
+                elif cell == 5:
+                    pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE)+self.master.offset).xy,
+                    ((x*TILESIZE+TILESIZE, y*TILESIZE)+self.master.offset).xy, ((x*TILESIZE+TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy ), 1)
+                elif cell == 6:
+                    pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy,
+                    ((x*TILESIZE, y*TILESIZE)+self.master.offset).xy, ((x*TILESIZE+TILESIZE, y*TILESIZE)+self.master.offset).xy ), 1)
 
                 # if self.path_data[y][x]:
                 #     pygame.draw.rect(self.screen, "blue", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE), 1)                

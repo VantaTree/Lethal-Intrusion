@@ -21,8 +21,9 @@ class Player:
         self.anim_index = 0
         self.anim_speed = 0.15
 
-        self.base_rect = FRect(0, 0, 18, 3)
         self.hitbox = FRect(32, 0, 17, 30)
+        self.top_rect = FRect(0, 0, 18, 3)
+        self.base_rect = FRect(0, 0, 18, 3)
         self.velocity = pygame.Vector2()
         self.input_x = 0
         self.facing_x = 1
@@ -334,6 +335,8 @@ class Player:
         py = int(self.hitbox.centery / TILESIZE)
         self.base_rect.midbottom = self.hitbox.midbottom
         self.base_rect.y += 1
+        self.top_rect.midtop = self.hitbox.midtop
+        self.top_rect.y -= 1
 
         for y in range(py-1, py+2):
             for x in range(px-1, px+2):
@@ -377,18 +380,18 @@ class Player:
                             self.hitbox.top = rect.bottom
                             self.velocity.y = 0
 
-                elif axis == 2 and self.velocity.y >= 0: # slopes
+                elif axis == 2: # slopes
 
-                    if not rect.colliderect(self.base_rect): continue
+                    if cell in (1, 2) and self.velocity.y >= 0 and rect.colliderect(self.base_rect):
 
-                    relx = None
-                    if cell == 1:
-                        relx = self.hitbox.right - rect.left
-                    elif cell == 2:
-                        relx = rect.right - self.hitbox.left
-                    else: continue
-                        
-                    if relx is not None:
+                        relx = None
+                        if cell == 1:
+                            relx = self.hitbox.right - rect.left
+                        elif cell == 2:
+                            relx = rect.right - self.hitbox.left
+                        else: continue
+                            
+                        # if relx is not None:
                         if relx > TILESIZE:
                             self.hitbox.bottom = rect.top
                             self.on_ground = True
@@ -398,6 +401,22 @@ class Player:
                             self.hitbox.bottom = y*TILESIZE-relx+TILESIZE# +1 #error correction
                             self.on_ground = True
                             self.on_slope = True
+                            self.velocity.y = 0
+
+                    if cell in (5, 6) and self.velocity.y <= 0 and rect.colliderect(self.top_rect):
+
+                        relx = None
+                        if cell == 5:
+                            relx = self.hitbox.right - rect.left
+                        elif cell == 6:
+                            relx = rect.right - self.hitbox.left
+                        else: continue
+
+                        if relx > TILESIZE:
+                            self.hitbox.top = rect.bottom
+                            self.velocity.y = 0
+                        elif self.hitbox.top < y*TILESIZE+relx:
+                            self.hitbox.top = y*TILESIZE+relx# +1 #error correction
                             self.velocity.y = 0
 
     def collect_coin(self, value):
@@ -433,7 +452,7 @@ class Player:
     def draw(self):
 
         self.screen.blit(self.image, self.rect.topleft + self.master.offset)
-        # pygame.draw.rect(self.screen, "green", (self.hitbox.x + self.master.offset.x, self.hitbox.y + self.master.offset.y, self.hitbox.width, self.hitbox.height), 1)
+        pygame.draw.rect(self.screen, "blue", (self.hitbox.x + self.master.offset.x, self.hitbox.y + self.master.offset.y, self.hitbox.width, self.hitbox.height), 1)
         # pygame.draw.rect(self.screen, "blue", (self.rect.x + self.master.offset.x, self.rect.y + self.master.offset.y, self.rect.width, self.rect.height), 1)
 
     def update(self):
