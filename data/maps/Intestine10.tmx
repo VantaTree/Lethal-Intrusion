@@ -6,10 +6,16 @@
   <image source="../../../../Users/viczi/Downloads/Bg1-1.png" width="512" height="288"/>
  </imagelayer>
  <objectgroup id="5" name="Transition Spawn">
-  <object id="2" name="Next_I10_01" x="450.666" y="271.333">
+  <object id="2" name="transition_spawn_0" x="447.999" y="278.666">
+   <properties>
+    <property name="index" type="int" value="0"/>
+   </properties>
    <point/>
   </object>
-  <object id="3" name="Next_I10_02" x="502.667" y="195.333">
+  <object id="3" name="transition_spawn_1" x="502.667" y="195.333">
+   <properties>
+    <property name="index" type="int" value="1"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>
@@ -58,7 +64,21 @@
 </data>
  </layer>
  <objectgroup id="3" name="Transition Region">
-  <object id="1" name="Next_I05_02" x="512.667" y="-0.666667" width="58" height="288.667"/>
-  <object id="4" name="Next_I08_02" x="132" y="288.667" width="361.333" height="87.3333"/>
+  <object id="1" name="transition_1" x="512.667" y="-0.666667" width="58" height="288.667">
+   <properties>
+    <property name="direction" value="right"/>
+    <property name="index" type="int" value="1"/>
+    <property name="room_to" value="Intestine05"/>
+    <property name="transition_to" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="4" name="transition_0" x="132" y="288.667" width="361.333" height="87.3333">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="index" type="int" value="0"/>
+    <property name="room_to" value="Intestine08"/>
+    <property name="transition_to" type="int" value="1"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

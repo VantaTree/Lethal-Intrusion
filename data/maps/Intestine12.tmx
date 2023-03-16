@@ -2,14 +2,28 @@
 <map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="6">
  <tileset firstgid="1" source="Intestine_TS01.tsx"/>
  <tileset firstgid="31" source="../tsx_data/collision.tsx"/>
- <objectgroup id="3" name="Transition Region">
-  <object id="4" name="Next_I11_02" x="-80" y="-5.33333" width="79.3333" height="164"/>
-  <object id="5" name="Next_I11_03" x="-81.3333" y="193.333" width="80.6667" height="98"/>
+ <objectgroup id="3" name="transition">
+  <object id="4" name="transition_0" x="-80" y="-5.33333" width="79.3333" height="164">
+   <properties>
+    <property name="direction" value="left"/>
+    <property name="index" type="int" value="0"/>
+    <property name="room_to" value="Intestine11"/>
+    <property name="transition_to" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="5" name="transition_1" x="-81.3333" y="193.333" width="80.6667" height="98">
+   <properties>
+    <property name="direction" value="left"/>
+    <property name="index" type="int" value="1"/>
+    <property name="room_to" value="Intestine11"/>
+    <property name="transition_to" type="int" value="1"/>
+   </properties>
+  </object>
  </objectgroup>
- <imagelayer id="5" name="Background">
+ <imagelayer id="5" name="bg_0">
   <image source="../../../../Users/viczi/Downloads/Bg2.png" width="512" height="288"/>
  </imagelayer>
- <layer id="1" name="Platform" width="32" height="18">
+ <layer id="1" name="tile_map_0" width="32" height="18">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,
@@ -31,7 +45,7 @@
 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,8
 </data>
  </layer>
- <layer id="2" name="Collision" width="32" height="18">
+ <layer id="2" name="collision" width="32" height="18">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,
@@ -53,11 +67,17 @@
 34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34
 </data>
  </layer>
- <objectgroup id="6" name="Transition Spawn">
-  <object id="2" name="Next_I12_01" x="8.66667" y="116.667">
+ <objectgroup id="6" name="transition_spawn">
+  <object id="2" name="transition_spawn_0" x="8.66667" y="116.667">
+   <properties>
+    <property name="index" type="int" value="0"/>
+   </properties>
    <point/>
   </object>
-  <object id="3" name="Next_I12_02" x="9.33333" y="260">
+  <object id="3" name="transition_spawn_1" x="9.33333" y="260">
+   <properties>
+    <property name="index" type="int" value="1"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>

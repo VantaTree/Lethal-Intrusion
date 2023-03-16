@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="9">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="10">
  <tileset firstgid="1" source="Intestine_TS01.tsx"/>
  <tileset firstgid="31" source="../tsx_data/collision.tsx"/>
- <imagelayer id="3" name="Background">
+ <imagelayer id="3" name="bg_0">
   <image source="../../../../Users/viczi/Downloads/Vertbg.png" width="512" height="288"/>
  </imagelayer>
- <layer id="1" name="Platform" width="32" height="18">
+ <layer id="1" name="tile_map_0" width="32" height="18">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,14,14,3,0,0,0,0,0,0,0,0,7,14,14,14,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,14,14,3,0,0,0,0,0,0,0,7,14,14,14,
@@ -27,7 +27,7 @@
 14,14,14,14,14,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,14,14,14,14
 </data>
  </layer>
- <layer id="2" name="Collision" width="32" height="18">
+ <layer id="2" name="collision" width="32" height="18">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,33,0,0,0,0,0,0,0,0,34,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,33,0,0,0,0,0,0,0,34,0,0,0,
@@ -49,20 +49,57 @@
 0,0,0,0,31,34,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,34,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="Transition Region">
-  <object id="1" name="Next_I06" x="184.667" y="-53.3333" width="327.333" height="54"/>
-  <object id="2" name="Next_I05_01" x="64" y="288.667" width="448.667" height="104.667"/>
-  <object id="3" name="Next_I03_02" x="-95.5" y="0" width="95" height="242"/>
-  <object id="8" name="Next_I13_02" x="512" y="3.5" width="72.5" height="261"/>
+ <objectgroup id="4" name="transition">
+  <object id="1" name="transition_3" x="184.667" y="-53.3333" width="327.333" height="54">
+   <properties>
+    <property name="direction" value="up"/>
+    <property name="index" type="int" value="3"/>
+    <property name="room_to" value="Intestine02"/>
+    <property name="transition_to" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="2" name="transition_1" x="64" y="288.667" width="448.667" height="104.667">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="index" type="int" value="1"/>
+    <property name="room_to" value="Intestine05"/>
+    <property name="transition_to" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="3" name="transition_0" x="-95.5" y="0" width="95" height="242">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="index" type="int" value="0"/>
+    <property name="room_to" value="Intestine03"/>
+    <property name="transition_to" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="8" name="transition_2" x="512" y="3.5" width="72.5" height="261">
+   <properties>
+    <property name="direction" value="right"/>
+    <property name="index" type="int" value="2"/>
+    <property name="room_to" value="Intestine02"/>
+    <property name="transition_to" type="int" value="0"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup id="5" name="Transition Spawn">
-  <object id="4" name="Next_I04_01" x="9.5" y="161.5">
+ <objectgroup id="5" name="transition_spawn">
+  <object id="4" name="transition_spawn_0" x="9.5" y="161.5">
+   <properties>
+    <property name="index" type="int" value="0"/>
+   </properties>
    <point/>
   </object>
-  <object id="6" name="Next_I04_03" x="329.5" y="8">
+  <object id="6" name="transition_spawn_2" x="329.5" y="8">
+   <properties>
+    <property name="index" type="int" value="2"/>
+   </properties>
    <point/>
   </object>
-  <object id="7" name="Next_I04_02" x="496.5" y="146">
+  <object id="7" name="transition_spawn_1" x="496.5" y="148.667">
+   <properties>
+    <property name="index" type="int" value="1"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>

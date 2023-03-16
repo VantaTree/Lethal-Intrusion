@@ -31,10 +31,10 @@
    </properties>
   </object>
  </objectgroup>
- <imagelayer id="8" name="bg_0" visible="0" parallaxx="0.3" parallaxy="0" repeatx="1">
+ <imagelayer id="8" name="bg_0" parallaxx="0.3" parallaxy="0" repeatx="1">
   <image source="../../graphics/background.png" width="192" height="240"/>
  </imagelayer>
- <imagelayer id="9" name="bg_1" visible="0" parallaxx="0.5" parallaxy="0" repeatx="1">
+ <imagelayer id="9" name="bg_1" parallaxx="0.5" parallaxy="0" repeatx="1">
   <image source="../../graphics/middleground.png" width="384" height="240"/>
  </imagelayer>
  <layer id="16" name="tile_map_0" width="32" height="32">
