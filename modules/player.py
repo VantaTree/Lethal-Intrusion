@@ -56,9 +56,9 @@ class Player:
         self.dying = False
         self.dead = False
 
-        self.has_double_jump = True
-        self.has_dash = True
-        self.has_wall_cling = True
+        self.has_dash = False
+        self.has_wall_cling = False
+        self.has_double_jump = False
 
         self.JUMP_BUFFER = CustomTimer()
         self.CYOTE_TIMER = CustomTimer()
@@ -190,6 +190,12 @@ class Player:
                     self.input_x = 0
                     self.get_hit(None)
                     return
+                if event.key == pygame.K_1:
+                    self.has_dash = not self.has_dash
+                if event.key == pygame.K_2:
+                    self.has_wall_cling = not self.has_wall_cling
+                if event.key == pygame.K_3:
+                    self.has_double_jump = not self.has_double_jump
 
         if self.JUMP_BUFFER.running and (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running or self.WALL_CYOTE_TIMER.running or self.can_double_jump):
 
