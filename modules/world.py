@@ -14,7 +14,7 @@ def preload_world_stuff():
 
 class Level:
 
-    def __init__(self, master, level_id, trans_id=None):
+    def __init__(self, master, level_id, trans_id=None, change_track=True):
         
         self.master = master
         self.screen = master.display
@@ -33,6 +33,17 @@ class Level:
             self.master.player.hitbox.midbottom = trans_to.x, trans_to.y
 
         # Crawler(master, [master.game.enemy_grp])
+        if change_track:
+            track = master.music.current_track
+            if self.map_type in ("Intestine01, Intestine02", "Intestine03"):
+                if track != "tunnel":
+                    master.music.change_track("tunnel")
+            elif track != "maze" and "Intestine" in self.map_type:
+                master.music.change_track("maze")
+                pygame.mixer.music.set_volume(0.6)
+            elif track != "heart" and "Heart" in self.map_type:
+                master.music.change_track("heart")
+                pygame.mixer.music.set_volume(0.3)
 
     @staticmethod
     def load_csv(path, integer=False):

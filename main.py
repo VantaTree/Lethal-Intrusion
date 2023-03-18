@@ -44,12 +44,12 @@ class App:
         self.master.display = self.display
         self.master.app = self
         self.master.window = sdl2.Window.from_display_module()
+        self.music = Music(self.master)
         self.debug = Debug(self.display, 14, 7)
         self.master.debug = self.debug
         self.game = Game(self.master)
         self.main_menu = MainMenu(self.master)
         SoundSet(self.master)
-        self.music = Music(self.master)
 
     async def run(self):
         

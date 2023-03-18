@@ -205,7 +205,7 @@ class Player:
             self.anim_index = 0
             self.JUMP_BUFFER.stop()
             self.CYOTE_TIMER.stop()
-            # self.master.sounds["jump2"].play()
+            self.master.sounds["jump2"].play()
 
         if self.DASH_BUFFER.running and not self.DASH_COOLDOWN.running:
 

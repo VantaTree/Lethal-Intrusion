@@ -33,7 +33,7 @@ class Game:
         self.death_menu = DeathMenu(master)
         self.particle_effect = ParticleEffect(master)
         self.player = Player(master)
-        self.level = Level(master, "Intestine01")
+        self.level = Level(master, "Intestine01", change_track=False)
         self.master.level = self.level
         self.camera = Camera(master, self.player, lambda a:a.hitbox.center)
 
