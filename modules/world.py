@@ -145,7 +145,7 @@ class Level:
 
     def draw_fg(self):
 
-        pass
+        self.screen.blit(self.master.game.vingette, (0, 0))
     
     @staticmethod
     def draw_image_layer(surface, layer, offset):

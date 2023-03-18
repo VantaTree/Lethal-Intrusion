@@ -3,7 +3,6 @@ from .engine import *
 from .config import *
 from .player import Player
 from .world import preload_world_stuff, Level, Camera, FIFO
-from .path_gen import generate_all_path
 from .economy import preload_coin, CoinSystem
 from .effects import preload_effects, ParticleEffect
 from .menus import PauseMenu, DeathMenu
@@ -28,6 +27,9 @@ class Game:
         preload_coin()
         preload_effects()
         self.enemy_grp = CustomGroup()
+
+        self.vingette = pygame.image.load("graphics/vingette.png").convert_alpha()
+        self.vingette = pygame.transform.scale(self.vingette, (W, H))
         
         self.pause_menu = PauseMenu(master)
         self.death_menu = DeathMenu(master)
@@ -90,7 +92,7 @@ class Game:
             if not self.fifo.run():
                 return
             if not self.fifo.active:
-                self.player.NEGATE_JUMP_STOP_TIMER.start(4_000)
+                self.player.NEGATE_JUMP_STOP_TIMER.start(2_000)
 
         self.player.update()
         self.enemy_grp.update()

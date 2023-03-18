@@ -1,4 +1,5 @@
 import pygame
+import glcontext
 import pygame_shaders
 import asyncio
 from modules import *
