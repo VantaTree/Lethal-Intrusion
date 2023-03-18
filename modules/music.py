@@ -28,6 +28,7 @@ class Music:
 
 
     def change_track(self, track_type):
+        if track_type == self.current_track: return
         delay = 0
         if self.is_loaded:
             pygame.mixer.music.fadeout(2_000)

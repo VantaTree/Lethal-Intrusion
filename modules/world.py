@@ -34,14 +34,12 @@ class Level:
 
         # Crawler(master, [master.game.enemy_grp])
         if change_track:
-            track = master.music.current_track
-            if self.map_type in ("Intestine01, Intestine02", "Intestine03"):
-                if track != "tunnel":
+            if "Intestine" in self.map_type:
+                if self.map_type in ("Intestine01, Intestine02", "Intestine03"):
                     master.music.change_track("tunnel")
-            elif track != "maze" and "Intestine" in self.map_type:
-                master.music.change_track("maze")
+                else: master.music.change_track("maze")
                 pygame.mixer.music.set_volume(0.6)
-            elif track != "heart" and "Heart" in self.map_type:
+            elif "Heart" in self.map_type:
                 master.music.change_track("heart")
                 pygame.mixer.music.set_volume(0.3)
 
