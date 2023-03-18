@@ -2,7 +2,7 @@ import pygame
 from .engine import *
 from .config import *
 from .player import Player
-from .world import preload_world_stuff, Level, Camera
+from .world import preload_world_stuff, Level, Camera, FIFO
 from .path_gen import generate_all_path
 from .economy import preload_coin, CoinSystem
 from .effects import preload_effects, ParticleEffect
@@ -42,6 +42,7 @@ class Game:
 
         self.coin_system = CoinSystem(master)
         self.ui = UI(master)
+        self.fifo = FIFO(master, 15)
 
     def transition_level(self, level_id, trans_id, direc):
 
@@ -51,6 +52,8 @@ class Game:
 
         if direc in ("right", "left"):
             self.player.velocity.update(self.player.max_speed*self.player.facing_x, 0)
+        elif direc == "up":
+            self.player.velocity.update(self.player.max_speed*self.player.facing_x, -self.player.jump_power)
         else: self.player.velocity.update(0, 0)
 
         self.player.jumping = False
@@ -81,6 +84,11 @@ class Game:
             self.pause_menu.update()
             self.pause_menu.draw()
             return
+        elif self.fifo.active:
+            if not self.fifo.run():
+                return
+            if not self.fifo.active:
+                self.player.NEGATE_JUMP_STOP_TIMER.start(4_000)
 
         self.player.update()
         self.enemy_grp.update()
@@ -98,3 +106,6 @@ class Game:
         self.particle_effect.attack_grp.draw()
         self.level.draw_fg()
         self.ui.draw()
+
+        if self.fifo.active:
+            self.fifo.midway()

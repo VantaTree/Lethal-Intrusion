@@ -84,6 +84,8 @@ class Level:
             layer.parallaxx = float(layer.parallaxx)
             layer.parallaxy = float(layer.parallaxy)
 
+            layer.image2 = pygame.image.load(layer.source.lstrip("../../")).convert()
+
     def get_object_layers(self):
 
         self.transition_objects = self.data.get_layer_by_name("transition")
@@ -153,7 +155,7 @@ class Level:
             for iy in range(0, ceil((H-pos[1])/layer.image.get_height())):
                 surface.blit(layer.image, (pos[0], pos[1]+ iy*layer.image.get_height()))
         else:
-            surface.blit(layer.image, pos)
+            surface.blit(layer.image2, pos)
 
     def check_player_transitions(self):
 
@@ -176,8 +178,7 @@ class Level:
                     pass
                 else: continue
 
-                self.master.game.transition_level(obj.properties["room_to"], obj.properties["transition_to"], direc)
-
+                self.master.game.fifo.start(self.master.game.transition_level, obj.properties["room_to"], obj.properties["transition_to"], direc)
 
     def update(self):
 
@@ -238,3 +239,53 @@ class Camera:
 
         self.update_offset()
         self.clamp_offset()
+
+class FIFO:
+
+    def __init__(self, master, alpha_speed):
+
+        self.master = master
+        self.screen = self.master.display
+        
+        self.cover_surf = pygame.Surface((W, H))
+        self.bg = pygame.Surface((W, H))
+
+        self.alpha = 0
+        self.alpha_speed = alpha_speed
+
+        self.alpha_direc = 0
+        self.active = False
+        self.signal = None
+        self.args = None
+
+    def start(self, signal, *args):
+
+        self.alpha_direc = 1
+        self.alpha = 0
+        self.active = True
+        self.signal = signal
+        self.args = args
+        self.bg = self.screen.copy()
+
+    def midway(self):
+
+        self.bg = self.screen.copy()
+        self.screen.fill((0, 0, 0))
+
+    def run(self):
+
+        self.alpha += self.alpha_speed*self.alpha_direc*self.master.dt
+        if self.alpha > 255:
+            self.alpha = 255
+            self.alpha_direc = -1
+            self.signal(*self.args)
+            return True
+        elif self.alpha < 0:
+            self.alpha_direc = 0
+            self.alpha = 0
+            self.active = False
+            return True
+        self.cover_surf.set_alpha(self.alpha)
+
+        self.screen.blit(self.bg, (0, 0))
+        self.screen.blit(self.cover_surf, (0, 0))

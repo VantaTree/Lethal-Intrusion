@@ -9,38 +9,6 @@
  <tileset firstgid="1" source="Intestine_TS01.tsx"/>
  <tileset firstgid="31" source="../tsx_data/collision.tsx"/>
  <tileset firstgid="38" source="../tsx_data/enemies.tsx"/>
- <objectgroup id="5" name="transition_spawn">
-  <object id="2" name="transition_spawn_0" x="502.5" y="230.5">
-   <properties>
-    <property name="index" type="int" value="1"/>
-   </properties>
-   <point/>
-  </object>
-  <object id="3" name="transition_spawn_1" x="422.5" y="9">
-   <properties>
-    <property name="index" type="int" value="0"/>
-   </properties>
-   <point/>
-  </object>
- </objectgroup>
- <objectgroup id="3" name="transition">
-  <object id="1" name="transition_1" x="-0.666667" y="-57.6666" width="512.667" height="58">
-   <properties>
-    <property name="direction" value="up"/>
-    <property name="index" type="int" value="1"/>
-    <property name="room_to" value="Intestine10"/>
-    <property name="transition_to" type="int" value="0"/>
-   </properties>
-  </object>
-  <object id="4" name="transition_0" x="512" y="68.5" width="75" height="193">
-   <properties>
-    <property name="direction" value="right"/>
-    <property name="index" type="int" value="0"/>
-    <property name="room_to" value="Intestine07"/>
-    <property name="transition_to" type="int" value="1"/>
-   </properties>
-  </object>
- </objectgroup>
  <imagelayer id="4" name="bg_0">
   <image source="../../graphics/BG_Intestine01.png" width="512" height="288"/>
  </imagelayer>
@@ -66,6 +34,38 @@
 14,14,14,14,14,14,14,14,14,14,14,14,8,14,14,14,14,14,14,14,14,14,8,14,14,14,14,14,14,14,14,14
 </data>
  </layer>
+ <objectgroup id="5" name="transition_spawn">
+  <object id="2" name="transition_spawn_0" x="512" y="240">
+   <properties>
+    <property name="index" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3" name="transition_spawn_1" x="416" y="0">
+   <properties>
+    <property name="index" type="int" value="0"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="3" name="transition">
+  <object id="1" name="transition_1" x="-0.666667" y="-57.6666" width="512.667" height="58">
+   <properties>
+    <property name="direction" value="up"/>
+    <property name="index" type="int" value="1"/>
+    <property name="room_to" value="Intestine10"/>
+    <property name="transition_to" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="4" name="transition_0" x="512" y="68.5" width="75" height="193">
+   <properties>
+    <property name="direction" value="right"/>
+    <property name="index" type="int" value="0"/>
+    <property name="room_to" value="Intestine07"/>
+    <property name="transition_to" type="int" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="6" name="enemy_trigger">
   <object id="7" name="trigger_0" x="238.667" y="224" width="145.333" height="32"/>
   <object id="8" name="trigger_1" x="288" y="32" width="97.3333" height="32"/>

@@ -29,8 +29,8 @@ class Player:
         self.facing_x = 1
         self.wall_x = 1
         self.max_speed = 2
-        self.acceleration = 0.5
-        self.deceleration = 0.5
+        self.acceleration = 0.3
+        self.deceleration = 0.3
         self.jump_power = 7.5
         self.dash_speed = 6
         self.terminal_vel = 6
@@ -74,6 +74,7 @@ class Player:
         self.HURTING_TIMER = CustomTimer()
         self.WALK_DUST_TIMER = CustomTimer()
         self.DEATH_SCREEN_TIMER = CustomTimer()
+        self.NEGATE_JUMP_STOP_TIMER = CustomTimer()
 
         self.WALK_DUST_TIMER.start(1_000, 1)
 
@@ -154,7 +155,7 @@ class Player:
 
         for event in pygame.event.get((pygame.KEYUP, pygame.KEYDOWN)):
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE and not self.NEGATE_JUMP_STOP_TIMER.running:
                     # self.JUMP_TIMER.stop()
                     # self.can_jump = True
                     if self.velocity.y < -2:
@@ -233,6 +234,7 @@ class Player:
 
             self.master.particle_effect.add_effect("attack", "slash", move_key, kill_on_anim=True,
                     flip=self.facing_x<0, anim_speed=0.3)
+            self.master.sounds["PC_slash"].play()
     
     def check_timers(self):
 
@@ -242,6 +244,7 @@ class Player:
         self.DASH_BUFFER.check()
         self.DASH_COOLDOWN.check()
         self.SLASH_BUFFER.check()
+        self.NEGATE_JUMP_STOP_TIMER.check()
         self.NEGATE_PLATFORM_COLLISION.check()
         if self.HURTING_TIMER.check():
             self.hurting = False
