@@ -32,8 +32,8 @@ class App:
         self.screen = pygame.display.set_mode((W, H), pygame.SCALED|pygame.OPENGL|pygame.DOUBLEBUF)
         self.display = pygame.Surface((W, H))
         pygame.display.set_caption("Lethal Intrusion")
-        # icon = pygame.image.load("graphics/icon.png").convert()
-        # pygame.display.set_icon(icon)
+        icon = pygame.image.load("graphics/icon.png").convert()
+        pygame.display.set_icon(icon)
         self.clock = pygame.time.Clock()
 
         self.shader = pygame_shaders.Shader((W, H), (W, H), (0, 0), "shaders/default_vertex.glsl", 
