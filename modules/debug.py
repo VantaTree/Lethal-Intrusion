@@ -11,7 +11,7 @@ class Debug:
         self.offset = offset
         self.font = pygame.font.SysFont("Sitka Small", self.font_size)
         self.surf_enabled = surf_enabled
-        self.on = True
+        self.on = False
 
     def __call__(self, name, value):
         

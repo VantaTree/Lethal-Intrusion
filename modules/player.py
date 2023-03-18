@@ -451,6 +451,8 @@ class Player:
         self.dead = False
         self.health = 5
         self.invinsible = False
+        self.facing_x = 1
+        self.master.game.fifo.start(self.master.game.transition_level, "Intestine01", 6, "down")
 
     def draw(self):
 
