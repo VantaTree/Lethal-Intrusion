@@ -22,6 +22,10 @@ class UI:
         self.bar_empty = pygame.transform.scale_by(self.bar_empty, 2)
         self.bar_health = pygame.transform.scale_by(self.bar_health, 2)
 
+        self.coin_icon = pygame.image.load("graphics/ui/coin.png").convert_alpha()
+        self.coin_icon = pygame.transform.scale_by(self.coin_icon, 2)
+        self.coin_ui_pos = 15, 40
+
     def draw(self):
 
         #player health
@@ -32,6 +36,11 @@ class UI:
             pos = (self.heart_icon.get_width()+self.health_ui_pos[0]+5+i*bar.get_width(),
                    self.health_ui_pos[1] + 6)
             self.screen.blit(bar, pos)
+
+        self.screen.blit(self.coin_icon, self.coin_ui_pos)
+        text = self.master.font.render(str(self.master.player.money), False, (123, 40, 102))
+        self.screen.blit(text, (self.coin_ui_pos[0]+20, self.coin_ui_pos[1]-2))
+
 
     def update(self):
 

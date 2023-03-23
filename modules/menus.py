@@ -32,13 +32,13 @@ class Button():
     def interact(self, mouse_pos, click=False):
 
         if click and self.mouse_hover:
-            # if self.action != "start":self.master.sounds["click"].play()
+            if self.action != "start":self.master.sounds["UI_click"].play()
             return self.action
         self.mouse_hover = self.detection_rect.collidepoint(mouse_pos)
         if self.mouse_hover:
             if not self.hover_sound_played:
                 self.hover_sound_played = True
-                # self.master.sounds["soft_click"].play()
+                self.master.sounds["soft_click"].play()
         else:self.hover_sound_played = False
 
     def draw(self):
@@ -57,20 +57,22 @@ class MainMenu():
         self.master = master
         self.master.main_menu = self
         self.screen = master.display
-        # self.mainmenu_bg = pygame.image.load("graphics/maps/parallax/back.png").convert()
-        self.title_surf = self.master.font_big.render('Lethal Intrusion', False, (163, 32, 28))
-        self.title_rect = self.title_surf.get_rect(midtop=(W/2, 40))
-        self.title_shadow = self.master.font_big.render('Lethal Intrusion', False, (105, 75, 105))
-        self.title_shadow.set_alpha(200)
+        self.mainmenu_bg = pygame.image.load("graphics/cover.png").convert()
+        self.mainmenu_bg = pygame.transform.scale(self.mainmenu_bg, (W, H))
+        # self.title_surf = self.master.font_big.render('Lethal Intrusion', False, (163, 32, 28))
+        # self.title_rect = self.title_surf.get_rect(midtop=(W/2, 40))
+        # self.title_shadow = self.master.font_big.render('Lethal Intrusion', False, (105, 75, 105))
+        # self.title_shadow.set_alpha(200)
         self.buttons:list[Button] = []
         self.create_buttons()
         
     def create_buttons(self):
 
-        col = (252, 205, 146)
-        Button(self.master, (W//2, H*0.5), 'start', self.buttons, col)
-        Button(self.master, (W//2, H*0.6), 'fullscreen', self.buttons, col)
-        Button(self.master, (W//2, H*0.7), 'quit', self.buttons, col)
+        # col = (252, 205, 146)
+        col = (123*1.5, 40*1.5, 102*1.5)
+        Button(self.master, (W//2, H*0.68), 'start', self.buttons, col)
+        Button(self.master, (W//2, H*0.78), 'fullscreen', self.buttons, col)
+        Button(self.master, (W//2, H*0.88), 'quit', self.buttons, col)
 
     def update(self):
 
@@ -80,8 +82,9 @@ class MainMenu():
                     action = button.interact(get_mouse_pos(self.master), click=True)
                     if action == 'start':
                         self.master.music.change_track("tunnel")
-                        # self.master.sounds["click"].play()
+                        self.master.sounds["UI_click"].play()
                         self.master.app.state = self.master.app.IN_GAME
+                        self.master.player.reset()
                     elif action == 'fullscreen':
                         pygame.display.toggle_fullscreen()
                     elif action == 'quit':
@@ -94,10 +97,10 @@ class MainMenu():
 
         self.screen.fill((80, 10, 20))
 
-        # self.screen.blit(self.mainmenu_bg, (0, 0))
+        self.screen.blit(self.mainmenu_bg, (0, 0))
 
-        self.screen.blit(self.title_shadow, (self.title_rect.x-2, self.title_rect.y+2))
-        self.screen.blit(self.title_surf, self.title_rect)
+        # self.screen.blit(self.title_shadow, (self.title_rect.x-2, self.title_rect.y+2))
+        # self.screen.blit(self.title_surf, self.title_rect)
 
         for button in self.buttons:
             button.draw()
@@ -117,7 +120,7 @@ class PauseMenu():
         self.screen = master.display
         self.bg = self.screen.copy()
         self.bg_overlay = pygame.Surface(self.screen.get_size())
-        self.bg_overlay.fill(0xb5737c)
+        self.bg_overlay.fill((123, 40, 102))
         self.bg_overlay.set_alpha(192)
 
         self.title_surf = self.master.font_big.render('Paused', False, (163, 32, 28))
@@ -136,14 +139,14 @@ class PauseMenu():
 
     def open(self):
         self.bg = self.screen.copy()
-        # self.master.sounds["click"].play()
+        self.master.sounds["UI_click"].play()
 
     def update(self):
         
         for event in pygame.event.get((pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN)):
             if event.type == pygame.KEYDOWN and event.key in (pygame.K_ESCAPE, pygame.K_p):
                 self.master.game.paused = False
-                # self.master.sounds["click"].play()
+                self.master.sounds["UI_click"].play()
                 return
             if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
                 for button in self.buttons:
@@ -178,7 +181,7 @@ class DeathMenu():
         self.screen = master.display
         self.bg = self.screen.copy()
         self.bg_overlay = pygame.Surface(self.screen.get_size())
-        self.bg_overlay.fill(0xb5737c)
+        self.bg_overlay.fill((123, 40, 102))
         self.bg_overlay.set_alpha(192)
 
         self.title_surf = self.master.font_big.render('You Died', False, (163, 32, 28))
@@ -197,7 +200,7 @@ class DeathMenu():
 
     def open(self):
         self.bg = self.screen.copy()
-        # self.master.sounds["click"].play()
+        self.master.sounds["UI_click"].play()
 
     def update(self):
         
@@ -206,6 +209,7 @@ class DeathMenu():
                 for button in self.buttons:
                     action = button.interact(get_mouse_pos(self.master), click=True)
                     if action == 'retry':
+                        self.master.player.reset()
                         self.master.game.paused = False
                         self.master.game.death_screen = False
                     elif action == 'main menu':

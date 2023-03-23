@@ -1,7 +1,6 @@
 import pygame
 import random
 from math import sin
-from .frect import FRect
 from .engine import *
 from .config import *
 
@@ -21,16 +20,16 @@ class Player:
         self.anim_index = 0
         self.anim_speed = 0.15
 
-        self.hitbox = FRect(32, 0, 17, 30)
-        self.top_rect = FRect(0, 0, 18, 3)
-        self.base_rect = FRect(0, 0, 18, 3)
+        self.hitbox = pygame.FRect(8*16, 11*16, 17, 30)
+        self.top_rect = pygame.FRect(0, 0, 18, 3)
+        self.base_rect = pygame.FRect(0, 0, 18, 3)
         self.velocity = pygame.Vector2()
         self.input_x = 0
         self.facing_x = 1
         self.wall_x = 1
         self.max_speed = 2
-        self.acceleration = 0.5
-        self.deceleration = 0.5
+        self.acceleration = 0.3
+        self.deceleration = 0.3
         self.jump_power = 7.5
         self.dash_speed = 6
         self.terminal_vel = 6
@@ -56,9 +55,9 @@ class Player:
         self.dying = False
         self.dead = False
 
-        self.has_double_jump = True
-        self.has_dash = True
-        self.has_wall_cling = True
+        self.has_dash = False
+        self.has_wall_cling = False
+        self.has_double_jump = False
 
         self.JUMP_BUFFER = CustomTimer()
         self.CYOTE_TIMER = CustomTimer()
@@ -74,6 +73,7 @@ class Player:
         self.HURTING_TIMER = CustomTimer()
         self.WALK_DUST_TIMER = CustomTimer()
         self.DEATH_SCREEN_TIMER = CustomTimer()
+        self.NEGATE_JUMP_STOP_TIMER = CustomTimer()
 
         self.WALK_DUST_TIMER.start(1_000, 1)
 
@@ -154,7 +154,7 @@ class Player:
 
         for event in pygame.event.get((pygame.KEYUP, pygame.KEYDOWN)):
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE and not self.NEGATE_JUMP_STOP_TIMER.running:
                     # self.JUMP_TIMER.stop()
                     # self.can_jump = True
                     if self.velocity.y < -2:
@@ -189,6 +189,12 @@ class Player:
                     self.input_x = 0
                     self.get_hit(None)
                     return
+                if event.key == pygame.K_1:
+                    self.has_dash = not self.has_dash
+                if event.key == pygame.K_2:
+                    self.has_wall_cling = not self.has_wall_cling
+                if event.key == pygame.K_3:
+                    self.has_double_jump = not self.has_double_jump
 
         if self.JUMP_BUFFER.running and (self.on_ground or self.wall_clinged or self.CYOTE_TIMER.running or self.WALL_CYOTE_TIMER.running or self.can_double_jump):
 
@@ -204,7 +210,7 @@ class Player:
             self.anim_index = 0
             self.JUMP_BUFFER.stop()
             self.CYOTE_TIMER.stop()
-            # self.master.sounds["jump2"].play()
+            self.master.sounds["jump2"].play()
 
         if self.DASH_BUFFER.running and not self.DASH_COOLDOWN.running:
 
@@ -233,6 +239,7 @@ class Player:
 
             self.master.particle_effect.add_effect("attack", "slash", move_key, kill_on_anim=True,
                     flip=self.facing_x<0, anim_speed=0.3)
+            self.master.sounds["PC_slash"].play()
     
     def check_timers(self):
 
@@ -242,6 +249,7 @@ class Player:
         self.DASH_BUFFER.check()
         self.DASH_COOLDOWN.check()
         self.SLASH_BUFFER.check()
+        self.NEGATE_JUMP_STOP_TIMER.check()
         self.NEGATE_PLATFORM_COLLISION.check()
         if self.HURTING_TIMER.check():
             self.hurting = False
@@ -448,6 +456,8 @@ class Player:
         self.dead = False
         self.health = 5
         self.invinsible = False
+        self.facing_x = 1
+        self.master.game.fifo.start(self.master.game.transition_level, "Intestine01", 6, "down")
 
     def draw(self):
 

@@ -1,4 +1,5 @@
 import pygame
+import glcontext
 import pygame_shaders
 import asyncio
 from modules import *
@@ -31,8 +32,8 @@ class App:
         self.screen = pygame.display.set_mode((W, H), pygame.SCALED|pygame.OPENGL|pygame.DOUBLEBUF)
         self.display = pygame.Surface((W, H))
         pygame.display.set_caption("Lethal Intrusion")
-        # icon = pygame.image.load("graphics/icon.png").convert()
-        # pygame.display.set_icon(icon)
+        icon = pygame.image.load("graphics/icon.png").convert()
+        pygame.display.set_icon(icon)
         self.clock = pygame.time.Clock()
 
         self.shader = pygame_shaders.Shader((W, H), (W, H), (0, 0), "shaders/default_vertex.glsl", 
@@ -44,12 +45,12 @@ class App:
         self.master.display = self.display
         self.master.app = self
         self.master.window = sdl2.Window.from_display_module()
+        self.music = Music(self.master)
         self.debug = Debug(self.display, 14, 7)
         self.master.debug = self.debug
         self.game = Game(self.master)
         self.main_menu = MainMenu(self.master)
         SoundSet(self.master)
-        self.music = Music(self.master)
 
     async def run(self):
         

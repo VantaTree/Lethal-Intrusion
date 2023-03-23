@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="32" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="23">
+ <properties>
+  <property name="bg_layers" type="int" value="1"/>
+  <property name="fg_layers" type="int" value="0"/>
+  <property name="name" value="Intestine09"/>
+  <property name="tile_map_layers" type="int" value="1"/>
+ </properties>
+ <tileset firstgid="1" source="Intestine_TS01.tsx"/>
+ <tileset firstgid="31" source="../tsx_data/collision.tsx"/>
+ <tileset firstgid="38" source="../tsx_data/enemies.tsx"/>
+ <imagelayer id="4" name="bg_0">
+  <image source="../../graphics/BG_Intestine01.png" width="512" height="288"/>
+  <properties>
+   <property name="direction" value="left"/>
+   <property name="index" type="int" value="0"/>
+   <property name="room_to" value="Intestine03"/>
+   <property name="transition_to" type="int" value="1"/>
+  </properties>
+ </imagelayer>
+ <layer id="1" name="tile_map_0" width="32" height="18">
+  <data encoding="csv">
+14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,4,5,5,6,4,7,14,14,
+20,20,20,20,20,20,20,20,20,20,20,20,20,20,14,14,14,14,14,14,14,14,14,15,4,5,11,12,4,7,14,14,
+4,5,6,6,6,6,4,4,4,4,4,5,4,5,19,14,14,14,14,14,14,14,14,15,4,5,17,18,4,7,14,14,
+4,5,6,12,12,12,4,4,4,4,4,5,10,11,12,7,14,14,14,14,14,14,14,21,10,11,17,18,4,7,14,14,
+4,4,5,6,18,18,6,6,6,6,6,6,16,17,18,19,20,20,20,20,20,20,21,11,16,17,17,18,10,7,14,14,
+10,10,11,12,17,18,12,12,12,12,12,12,22,23,24,0,0,0,0,4,4,4,4,5,6,23,17,18,16,7,14,14,
+16,16,17,18,17,18,18,18,18,18,18,18,28,29,30,0,0,0,0,10,10,10,10,11,12,29,17,18,22,7,14,14,
+2,2,2,2,2,2,2,2,2,2,2,2,3,29,30,0,0,0,0,16,16,16,16,17,18,4,5,2,2,8,14,14,
+14,14,14,14,14,8,14,14,14,8,14,14,8,3,24,0,0,0,0,0,0,4,5,6,4,10,11,12,6,7,14,14,
+14,14,14,14,14,14,14,14,14,14,14,14,8,8,3,0,0,0,0,0,0,10,11,11,12,16,17,18,12,7,14,14,
+14,14,14,14,14,14,14,14,14,14,14,14,14,14,8,2,2,2,2,2,2,2,5,6,18,22,16,17,18,7,14,14,
+14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,9,11,12,24,0,0,0,16,7,14,14,
+14,14,14,14,14,14,14,14,14,14,14,14,14,14,8,20,20,20,20,20,20,15,17,18,0,0,0,0,0,7,14,14,
+14,14,14,14,14,14,14,14,14,14,14,14,14,14,9,6,6,24,0,0,23,23,23,23,24,0,0,0,0,7,14,14,
+14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,12,12,4,5,0,0,0,0,0,0,0,0,0,0,7,14,14,
+14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,18,18,10,11,6,0,0,0,4,0,0,0,0,0,7,14,14,
+14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,24,24,16,17,1,2,2,2,10,0,0,0,0,0,7,14,14,
+14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,30,30,22,23,7,8,8,9,16,0,0,0,0,0,7,14,14
+</data>
+ </layer>
+ <objectgroup id="5" name="transition_spawn">
+  <object id="7" name="transition_spawn_0" x="0" y="112">
+   <properties>
+    <property name="index" type="int" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="9" name="transition_spawn_3" x="448" y="0">
+   <properties>
+    <property name="index" type="int" value="3"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="15" name="transition_spawn_2" x="272" y="288">
+   <properties>
+    <property name="index" type="int" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="22" name="transition_spawn_1" x="416" y="288">
+   <properties>
+    <property name="index" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="3" name="transition">
+  <object id="5" name="transition_0" x="-84.6667" y="-2.66667" width="83.3333" height="278">
+   <properties>
+    <property name="direction" value="left"/>
+    <property name="index" type="int" value="0"/>
+    <property name="room_to" value="Intestine07"/>
+    <property name="transition_to" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="6" name="transition_3" x="215" y="-89.6667" width="297" height="89">
+   <properties>
+    <property name="direction" value="up"/>
+    <property name="index" type="int" value="3"/>
+    <property name="room_to" value="Intestine13"/>
+    <property name="transition_to" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="16" name="transition_2" x="199" y="289.5" width="123" height="68.5">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="index" type="int" value="2"/>
+    <property name="room_to" value="Intestine11"/>
+    <property name="transition_to" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="17" name="transition_1" x="361" y="288" width="119.5" height="77">
+   <properties>
+    <property name="direction" value="down"/>
+    <property name="index" type="int" value="1"/>
+    <property name="room_to" value="Intestine11"/>
+    <property name="transition_to" type="int" value="3"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="enemy_trigger"/>
+ <objectgroup id="7" name="enemies">
+  <object id="19" name="enemy_0" gid="38" x="328" y="160" width="32" height="32"/>
+  <object id="20" name="enemy_2" gid="38" x="317" y="255.5" width="32" height="32"/>
+  <object id="21" name="enemy_1" gid="39" x="124" y="112" width="48" height="32"/>
+ </objectgroup>
+ <layer id="2" name="collision" width="32" height="18">
+  <data encoding="csv">
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,31,31,31,34,31,31,
+34,34,34,34,34,34,34,34,34,34,34,34,34,34,31,31,31,31,31,31,31,31,31,34,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,36,31,31,31,31,31,31,31,31,34,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,31,31,31,31,31,37,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,36,34,34,34,34,34,34,37,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,
+34,34,34,34,34,34,34,34,34,34,34,34,33,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,34,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,33,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,33,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,34,34,34,34,34,34,31,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,34,34,34,34,34,34,31,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,31,31,32,34,34,34,31,31,31,31,31,31,34,31,31,
+31,31,31,31,31,31,31,31,31,31,31,31,31,31,34,31,31,31,31,34,31,31,34,31,31,31,31,31,31,34,31,31
+</data>
+ </layer>
+</map>

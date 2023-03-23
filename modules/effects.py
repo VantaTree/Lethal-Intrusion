@@ -1,5 +1,4 @@
 import pygame
-from .frect import FRect
 from .config import *
 from .engine import *
 

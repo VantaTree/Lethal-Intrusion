@@ -14,7 +14,7 @@ def preload_world_stuff():
 
 class Level:
 
-    def __init__(self, master, level_id, trans_id=None):
+    def __init__(self, master, level_id, trans_id=None, change_track=True):
         
         self.master = master
         self.screen = master.display
@@ -23,7 +23,7 @@ class Level:
         self.data = load_pygame(F"data/maps/{self.map_type}.tmx")
         self.size = self.data.width, self.data.height
 
-        self.path_data = self.load_csv(F"data/map_paths/{self.map_type}.csv", True)
+        # self.path_data = self.load_csv(F"data/map_paths/{self.map_type}.csv", True)
         self.get_collision_data()
         self.get_draw_layers()
         self.get_object_layers()
@@ -32,7 +32,16 @@ class Level:
             trans_to = self.data.get_object_by_name(F"transition_spawn_{trans_id}")
             self.master.player.hitbox.midbottom = trans_to.x, trans_to.y
 
-        Crawler(master, [master.game.enemy_grp])
+        # Crawler(master, [master.game.enemy_grp])
+        if change_track:
+            if "Intestine" in self.map_type:
+                if self.map_type in ("Intestine01, Intestine02", "Intestine03"):
+                    master.music.change_track("tunnel")
+                else: master.music.change_track("maze")
+                pygame.mixer.music.set_volume(0.6)
+            elif "Heart" in self.map_type:
+                master.music.change_track("heart")
+                pygame.mixer.music.set_volume(0.3)
 
     @staticmethod
     def load_csv(path, integer=False):
@@ -84,6 +93,8 @@ class Level:
             layer.parallaxx = float(layer.parallaxx)
             layer.parallaxy = float(layer.parallaxy)
 
+            layer.image2 = pygame.image.load(layer.source.lstrip("../../")).convert()
+
     def get_object_layers(self):
 
         self.transition_objects = self.data.get_layer_by_name("transition")
@@ -91,7 +102,11 @@ class Level:
     def draw_bg(self):
 
         pygame_shaders.clear((0, 0, 0))
-        self.screen.fill(self.data.background_color)
+        
+        if self.data.background_color:
+            self.screen.fill(self.data.background_color)
+        else:
+            self.screen.fill((255, 0, 255))
 
         for layer in self.bg_layers:
             if isinstance(layer, pytmx.TiledImageLayer):
@@ -101,27 +116,28 @@ class Level:
             for x, y, image in layer.tiles():
                 self.screen.blit(image, (x*TILESIZE + self.master.offset.x, y*TILESIZE + self.master.offset.y - image.get_height() + TILESIZE))
         
-        for y, row in enumerate(self.collision):
-            for x, cell in enumerate(row):
-                if cell == 1:
-                    pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy,
-                    ((x*TILESIZE+TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy, ((x*TILESIZE+TILESIZE, y*TILESIZE)+self.master.offset).xy ), 1)
-                elif cell == 2:
-                    pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy,
-                    ((x*TILESIZE+TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy, ((x*TILESIZE, y*TILESIZE)+self.master.offset).xy ), 1)
-                elif cell == 3:
-                    pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE), 1)
-                elif cell == 4:
-                    pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE//4), 1)
-                elif cell == 5:
-                    pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE)+self.master.offset).xy,
-                    ((x*TILESIZE+TILESIZE, y*TILESIZE)+self.master.offset).xy, ((x*TILESIZE+TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy ), 1)
-                elif cell == 6:
-                    pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy,
-                    ((x*TILESIZE, y*TILESIZE)+self.master.offset).xy, ((x*TILESIZE+TILESIZE, y*TILESIZE)+self.master.offset).xy ), 1)
+        if self.master.debug.on:
+            for y, row in enumerate(self.collision):
+                for x, cell in enumerate(row):
+                    if cell == 1:
+                        pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy,
+                        ((x*TILESIZE+TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy, ((x*TILESIZE+TILESIZE, y*TILESIZE)+self.master.offset).xy ), 1)
+                    elif cell == 2:
+                        pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy,
+                        ((x*TILESIZE+TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy, ((x*TILESIZE, y*TILESIZE)+self.master.offset).xy ), 1)
+                    elif cell == 3:
+                        pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE), 1)
+                    elif cell == 4:
+                        pygame.draw.rect(self.screen, "green", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE//4), 1)
+                    elif cell == 5:
+                        pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE)+self.master.offset).xy,
+                        ((x*TILESIZE+TILESIZE, y*TILESIZE)+self.master.offset).xy, ((x*TILESIZE+TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy ), 1)
+                    elif cell == 6:
+                        pygame.draw.polygon(self.screen, 'green', ( ((x*TILESIZE, y*TILESIZE+TILESIZE)+self.master.offset).xy,
+                        ((x*TILESIZE, y*TILESIZE)+self.master.offset).xy, ((x*TILESIZE+TILESIZE, y*TILESIZE)+self.master.offset).xy ), 1)
 
-                # if self.path_data[y][x]:
-                #     pygame.draw.rect(self.screen, "blue", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE), 1)                
+                    # if self.path_data[y][x]:
+                    #     pygame.draw.rect(self.screen, "blue", (x*TILESIZE+self.master.offset.x, y*TILESIZE+self.master.offset.y, TILESIZE, TILESIZE), 1)                
 
         for layer in self.fg_layers:
             if isinstance(layer, pytmx.TiledImageLayer):
@@ -129,7 +145,7 @@ class Level:
 
     def draw_fg(self):
 
-        pass
+        self.screen.blit(self.master.game.vingette, (0, 0))
     
     @staticmethod
     def draw_image_layer(surface, layer, offset):
@@ -148,7 +164,7 @@ class Level:
             for iy in range(0, ceil((H-pos[1])/layer.image.get_height())):
                 surface.blit(layer.image, (pos[0], pos[1]+ iy*layer.image.get_height()))
         else:
-            surface.blit(layer.image, pos)
+            surface.blit(layer.image2, pos)
 
     def check_player_transitions(self):
 
@@ -171,12 +187,12 @@ class Level:
                     pass
                 else: continue
 
-                self.master.game.transition_level(obj.properties["room_to"], obj.properties["transition_to"], direc)
-
+                self.master.game.fifo.start(self.master.game.transition_level, obj.properties["room_to"], obj.properties["transition_to"], direc)
 
     def update(self):
 
         self.check_player_transitions()
+        self.master.debug("lvl: ", self.map_type)
 
 
 class Camera:
@@ -232,3 +248,53 @@ class Camera:
 
         self.update_offset()
         self.clamp_offset()
+
+class FIFO:
+
+    def __init__(self, master, alpha_speed):
+
+        self.master = master
+        self.screen = self.master.display
+        
+        self.cover_surf = pygame.Surface((W, H))
+        self.bg = pygame.Surface((W, H))
+
+        self.alpha = 0
+        self.alpha_speed = alpha_speed
+
+        self.alpha_direc = 0
+        self.active = False
+        self.signal = None
+        self.args = None
+
+    def start(self, signal, *args):
+
+        self.alpha_direc = 1
+        self.alpha = 0
+        self.active = True
+        self.signal = signal
+        self.args = args
+        self.bg = self.screen.copy()
+
+    def midway(self):
+
+        self.bg = self.screen.copy()
+        self.screen.fill((0, 0, 0))
+
+    def run(self):
+
+        self.alpha += self.alpha_speed*self.alpha_direc*self.master.dt
+        if self.alpha > 255:
+            self.alpha = 255
+            self.alpha_direc = -1
+            self.signal(*self.args)
+            return True
+        elif self.alpha < 0:
+            self.alpha_direc = 0
+            self.alpha = 0
+            self.active = False
+            return True
+        self.cover_surf.set_alpha(self.alpha)
+
+        self.screen.blit(self.bg, (0, 0))
+        self.screen.blit(self.cover_surf, (0, 0))

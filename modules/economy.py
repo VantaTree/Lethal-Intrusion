@@ -1,6 +1,5 @@
 import pygame
 import random
-from .frect import FRect
 from .config import *
 from .engine import *
 
@@ -32,9 +31,9 @@ class Coin(pygame.sprite.Sprite):
             size = 6
         elif value == 5:
             size = 8
-        self.hitbox = FRect(0, 0, size, size)
-        self.base_rect = FRect(0, 0, size+1, 2)
-        self.top_rect = FRect(0, 0, size+1, 2)
+        self.hitbox = pygame.FRect(0, 0, size, size)
+        self.base_rect = pygame.FRect(0, 0, size+1, 2)
+        self.top_rect = pygame.FRect(0, 0, size+1, 2)
         self.hitbox.center = pos
 
         self.animation = coin_animations[str(value)]

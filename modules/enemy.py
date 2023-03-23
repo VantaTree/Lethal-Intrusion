@@ -1,5 +1,4 @@
 import pygame
-from .frect import FRect
 from .config import *
 from .engine import *
 from math import sin
@@ -34,10 +33,10 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.anim_index = 0
 
-        self.hitbox = FRect(0, 0, *size)
+        self.hitbox = pygame.FRect(0, 0, *size)
         self.hitbox.midbottom = pos
-        self.base_rect = FRect(0, 0, size[0]+1, 3)
-        self.top_rect = FRect(0, 0, size[0]+1, 3)
+        self.base_rect = pygame.FRect(0, 0, size[0]+1, 3)
+        self.top_rect = pygame.FRect(0, 0, size[0]+1, 3)
         self.velocity = pygame.Vector2()
         self.input_x = 0
         self.facing_x = -1 if flip else 1
