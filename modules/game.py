@@ -78,6 +78,8 @@ class Game:
 
     def run(self):
 
+        self.master.debug("CoinsUpdating: ", len(self.coin_system.grp))
+
         pass
 
         if self.death_screen:
@@ -113,3 +115,4 @@ class Game:
 
         if self.fifo.active:
             self.fifo.midway()
+
