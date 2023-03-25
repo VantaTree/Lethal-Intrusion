@@ -1,4 +1,4 @@
-pygame-ce==2.2.0.dev2
+pygame-ce==2.2.0
 PyTMX==3.31
 moderngl==5.7.4
 PygameShader==1.0.8
